@@ -14,4 +14,14 @@
     <string name="login_label">Login</string>
     <string name="login_button">Login</string>
     <string name="dont_have_account_button">Don\'t have account.</string>
+    <string name="title_activity_homepage">HomepageActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!-- Relativo à navigation -->
+    <string name="logout">Logout</string>
+    <string name="email">Email</string>
+    <string name="nif">NIF</string>
+    <string name="name">Name</string>
+    <string name="action_settings">Settings</string>
 </resources>
