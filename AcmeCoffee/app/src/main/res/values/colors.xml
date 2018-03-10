@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#124559</color>
+    <color name="colorPrimaryDark">#01161E</color>
+    <color name="colorAccent">#AEC3B0</color>
+    <color name="colorSmooth">#EFF6E0</color>
+
+    <color name="ovalcolor1">#8693AB</color>
+    <color name="ovalcolor2">#BDD4E7</color>
+    <color name="ovalcolor3">#637074</color>
+    <color name="ovalcolor4">#AAB9CF</color>
+</resources>
