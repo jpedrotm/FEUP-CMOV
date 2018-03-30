@@ -24,4 +24,12 @@
     <string name="nif">NIF</string>
     <string name="name">Name</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Relativo aos vouchers -->
+    <string name="voucher_types">Voucher types</string>
+    <string name="coffee_voucher">Free coffee voucher</string>
+    <string name="discount_voucher">5% discount voucher</string>
+    <string name="coffee_description">One free coffee voucher is offered to the costumer whenever he consumes 3 coffees.</string>
+    <string name="discount_description">A 5% discount voucher is offered whenever the accumulated payed values from a customer surpasses a new multiple of 100€.</string>
+    <string name="quantity">Quantity: </string>
 </resources>

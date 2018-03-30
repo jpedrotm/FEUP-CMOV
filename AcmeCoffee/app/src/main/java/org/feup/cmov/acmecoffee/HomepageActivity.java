@@ -94,4 +94,9 @@ public class HomepageActivity extends AppCompatActivity
         Intent intent = new Intent(getApplicationContext(), ViewMenuActivity.class);
         startActivity(intent);
     }
+
+    public void goToVouchers(View view){
+        Intent intent = new Intent(getApplicationContext(), ViewVouchersActivity.class);
+        startActivity(intent);
+    }
 }

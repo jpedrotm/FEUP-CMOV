@@ -23,6 +23,7 @@
             android:label="@string/title_activity_homepage"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ViewMenuActivity" />
+        <activity android:name=".ViewVouchersActivity"></activity>
     </application>
 
 </manifest>
