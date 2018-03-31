@@ -1,4 +1,4 @@
-package org.feup.cmov.acmecoffee.Logic;
+package org.feup.cmov.acmecoffee.Model;
 
 public class Item {
     private String name;

@@ -1,4 +1,4 @@
-package org.feup.cmov.acmecoffee.Logic;
+package org.feup.cmov.acmecoffee.Model;
 
 import java.util.ArrayList;
 
@@ -28,23 +28,6 @@ public class User {
 
     public static void createUser(String e, String na, String p, String n) {
         instance = new User(e, na, p, n);
-    }
-
-    public static boolean validateFields(String email, String name, String pass, String confirmPass, String nif) {
-        if (true) { // aqui é colocar a condição que verifica se o email ainda não existe noutra conta na base de dados
-            if(validatePassword(pass,confirmPass) && validateNif(nif)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean validatePassword(String password, String confirmPassword) {
-        return password.length() >= 6 && password.length() == confirmPassword.length() && password.equals(confirmPassword);
-    }
-
-    private static boolean validateNif(String nif) {
-        return nif.length() == 9 && nif.matches("[0-9]+");
     }
 
     public String getEmail() {
