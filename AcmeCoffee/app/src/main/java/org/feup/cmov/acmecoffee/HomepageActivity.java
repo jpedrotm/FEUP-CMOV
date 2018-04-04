@@ -1,9 +1,10 @@
 package org.feup.cmov.acmecoffee;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
-import android.hardware.usb.UsbRequest;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,10 +15,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Model.User;
+import org.feup.cmov.acmecoffee.Utils.HttpHandler;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HomepageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private DatabaseHelper items;
+    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +41,11 @@ public class HomepageActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        Log.d("USER", User.getInstance().toString());
+        items = new DatabaseHelper(this);
+
+        GetItems getItems = new GetItems(this);
+        Thread thr = new Thread(getItems);
+        thr.start();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         //navigationView.setItemTextColor(ColorStateList.valueOf(Color.WHITE)); Meter aqui a cor primaria
@@ -91,6 +104,40 @@ public class HomepageActivity extends AppCompatActivity
     public void goToMenu(View view) {
         Intent intent = new Intent(getApplicationContext(), ViewMenuActivity.class);
         startActivity(intent);
+    }
+
+    private void addItemsToDatabase(JSONArray its) throws JSONException {
+        System.out.println(its.toString());
+
+        db = items.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        JSONObject item;
+        for(int i = 0;i < its.length(); i++) {
+            item = new JSONObject(its.getString(i));
+            values.put("item_id", item.getString("id"));
+            values.put("name", item.getString("name"));
+            values.put("price", item.getLong("price"));
+            values.put("type", item.getString("type"));
+            db.insert("Items", null, values);
+        }
+    }
+
+    private class GetItems implements Runnable {
+        Context context = null;
+
+        GetItems(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            String response = HttpHandler.getAllItems();
+            try {
+                addItemsToDatabase(new JSONArray(response));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void goToVouchers(View view){

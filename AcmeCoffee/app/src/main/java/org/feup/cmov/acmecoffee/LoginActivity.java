@@ -55,12 +55,14 @@ public class LoginActivity extends AppCompatActivity {
         if(emailText.length() >= 0 && passwordText.length() >= 0) {
             try {
                 LoginAsync la = new LoginAsync();
-                JSONObject message = JSONCreater.convertToJSON(JSONCreater.FormType.LOGIN_FORM, Arrays.asList(emailText,passwordText));
+                JSONObject message = JSONCreater.convertToJSON(JSONCreater.FormType.LOGIN_FORM,
+                        Arrays.asList(emailText,passwordText));
                 String response = la.execute(message).get();
 
                 if(response != null) {
                     message = new JSONObject(response);
-                    User.createUser(message.getLong("id"), message.getString("email"), message.getString("name"),message.getString("nif"), message.getString("vouchers"));
+                    User.createUser(message.getLong("id"), message.getString("email"),
+                            message.getString("name"),message.getString("nif"), message.getString("vouchers"));
                     Log.d("INFO", User.getInstance().toString());
                     Intent intent = new Intent(getApplicationContext(),HomepageActivity.class);
                     startActivity(intent);

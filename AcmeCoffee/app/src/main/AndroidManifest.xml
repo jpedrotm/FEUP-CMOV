@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.feup.cmov.acmecoffee">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,7 +25,7 @@
             android:label="@string/title_activity_homepage"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ViewMenuActivity" />
-        <activity android:name=".ViewVouchersActivity"></activity>
+        <activity android:name=".ViewVouchersActivity" />
     </application>
 
 </manifest>
