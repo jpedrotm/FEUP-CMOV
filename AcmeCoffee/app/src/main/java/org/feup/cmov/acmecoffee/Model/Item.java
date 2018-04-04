@@ -36,7 +36,7 @@ public class Item {
 
 
     public enum itemType {
-        DRINKS, SNACKS, MEALS, COFFEES, CAKES
+        DRINKS, SNACKS, MEALS, COFFEE, CAKES
     }
 
 }

@@ -9,10 +9,11 @@ import java.util.List;
 public class JSONCreater {
 
     public enum FormType {
-        REGISTER_FORM
+        REGISTER_FORM, LOGIN_FORM
     }
 
     private static String[] REGISTER_FORM_FIELD = {"email", "name", "password", "nif"};
+    private static String[] LOGIN_FORM_FIELD = {"email", "password"};
 
     public static JSONObject convertToJSON(FormType type, List<String> values) {
         String[] fields = getForm(type);
@@ -32,6 +33,8 @@ public class JSONCreater {
         switch (type) {
             case REGISTER_FORM:
                 return REGISTER_FORM_FIELD;
+            case LOGIN_FORM:
+                return LOGIN_FORM_FIELD;
             default:
                 return null;
         }

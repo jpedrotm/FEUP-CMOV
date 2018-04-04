@@ -1,24 +1,17 @@
 package org.feup.cmov.acmecoffee.Model;
 
 public class Voucher {
+    private Long id;
     private String description;
-    private voucherType type;
-    private String image; // mesma situação que no Item, uma imagem para cada tipo de Voucher
+    private VoucherType type;
 
-    public Voucher(voucherType type) {
-        this.type = type;
-        this.description = getDescriptionFromType(type);
+    public Voucher(Long id, String type) {
+        this.id = id;
+        this.type = getTypeFromString(type);
+        this.description = getDescriptionFromType(this.type);
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public voucherType getType() {
-        return type;
-    }
-
-    private String getDescriptionFromType(voucherType type) {
+    private String getDescriptionFromType(VoucherType type) {
         switch(type) {
             case FREE_COFFEE:
                 return "Free Coffee in a new order.";
@@ -29,7 +22,34 @@ public class Voucher {
         }
     }
 
-    public enum voucherType {
+    private VoucherType getTypeFromString(String t) {
+        switch(t) {
+            case "FREE_COFFEE":
+                return VoucherType.FREE_COFFEE;
+            case "FIVE_PERCENT_DISCOUNT":
+                return VoucherType.FIVE_PERCENT_DISCOUNT;
+            default:
+                return null;
+        }
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public VoucherType getType() {
+        return type;
+    }
+
+    @Override
+    public String toString() {
+        return "Voucher{" +
+                "description='" + description + '\'' +
+                ", type=" + type +
+                '}';
+    }
+
+    public enum VoucherType {
         FREE_COFFEE, FIVE_PERCENT_DISCOUNT
     }
 }

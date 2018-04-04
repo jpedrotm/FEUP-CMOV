@@ -10,14 +10,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.feup.cmov.acmecoffee.Model.User;
+import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.JSONCreater;
 import org.feup.cmov.acmecoffee.Utils.ToastManager;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText email, name, password, confirmPassword, nif;
@@ -86,18 +86,33 @@ public class RegisterActivity extends AppCompatActivity {
 
         if(checkFields(emailText, nameText, passwordText, confirmPasswordText, nifText)) {
             RegisterAsync ra = new RegisterAsync();
-            ra.execute(JSONCreater.convertToJSON(JSONCreater.FormType.REGISTER_FORM, Arrays.asList(emailText, nameText, passwordText, nifText)));
-            Intent intent = new Intent(getApplicationContext(), HomepageActivity.class);
-            startActivity(intent);
+            try {
+                JSONObject message = JSONCreater.convertToJSON(JSONCreater.FormType.REGISTER_FORM,
+                        Arrays.asList(emailText, nameText, passwordText, nifText));
+                String response = ra.execute(message).get();
+                if(response != null) {
+                    message = new JSONObject(response);
+                    User.createUser(message.getLong("id"), message.getString("email")
+                            ,message.getString("name"),message.getString("nif"), message.getString("vouchers"));
+
+                    Intent intent = new Intent(getApplicationContext(), HomepageActivity.class);
+                    startActivity(intent);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private class RegisterAsync extends AsyncTask<JSONObject, String, String[]> {
+    private static class RegisterAsync extends AsyncTask<JSONObject, String, String> {
 
         @Override
-        protected String[] doInBackground(JSONObject... jsonObjects) {
-            System.out.println(jsonObjects[0].toString());
-            return new String[0];
+        protected String doInBackground(JSONObject... jsonObjects) {
+            return HttpHandler.insertNewCustomer(jsonObjects[0].toString());
         }
     }
 }
