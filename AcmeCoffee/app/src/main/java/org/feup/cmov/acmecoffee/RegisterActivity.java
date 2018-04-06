@@ -1,17 +1,19 @@
 package org.feup.cmov.acmecoffee;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.feup.cmov.acmecoffee.Model.User;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.JSONCreater;
+import org.feup.cmov.acmecoffee.Utils.SessionManager;
 import org.feup.cmov.acmecoffee.Utils.ToastManager;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +24,18 @@ import java.util.concurrent.ExecutionException;
 public class RegisterActivity extends AppCompatActivity {
     private EditText email, name, password, confirmPassword, nif;
 
+    private SharedPreferences prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(prefs.contains("email")) {
+            Intent intent = new Intent(getApplicationContext(), HomepageActivity.class);
+            startActivity(intent);
+        }
+
         setContentView(R.layout.activity_register);
 
         email = findViewById(R.id.register_email);
@@ -61,7 +72,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), ToastManager.WRONG_NIF, Toast.LENGTH_LONG).show();
             return false;
         }
-        else if(false) { //verificar email
+        else if(false) { // verificar email
            Toast.makeText(getApplicationContext(), ToastManager.WRONG_EMAIL, Toast.LENGTH_LONG).show();
            return false;
        }
@@ -92,9 +103,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String response = ra.execute(message).get();
                 if(response != null) {
                     message = new JSONObject(response);
-                    User.createUser(message.getLong("id"), message.getString("email")
-                            ,message.getString("name"),message.getString("nif"), message.getString("vouchers"));
-
+                    SessionManager.createSession(message, prefs);
                     Intent intent = new Intent(getApplicationContext(), HomepageActivity.class);
                     startActivity(intent);
                 }

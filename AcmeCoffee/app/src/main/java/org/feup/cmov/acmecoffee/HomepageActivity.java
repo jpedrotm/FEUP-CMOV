@@ -3,8 +3,11 @@ package org.feup.cmov.acmecoffee;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,16 +19,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
-import org.feup.cmov.acmecoffee.Model.User;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
+import org.feup.cmov.acmecoffee.Utils.SessionManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public class HomepageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private DatabaseHelper items;
+    private SharedPreferences prefs;
+
+    private DatabaseHelper databaseHelper;
     private SQLiteDatabase db;
 
     @Override
@@ -41,15 +48,36 @@ public class HomepageActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        items = new DatabaseHelper(this);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        databaseHelper = new DatabaseHelper(this);
+        SQLiteDatabase database = databaseHelper.getReadableDatabase();
+
+        Cursor cursor = database.rawQuery("SELECT voucher_id, type FROM vouchers",
+                null);
+
+        while(cursor.moveToNext()) {
+            System.out.println("AQUI VAI: " + cursor.getLong(0) + " ; " +cursor.getString(1));
+        }
 
         GetItems getItems = new GetItems(this);
         Thread thr = new Thread(getItems);
         thr.start();
 
+        setNavigationViewItemsTitle();
+    }
+
+    private void setNavigationViewItemsTitle() {
+        Map<String, ?> sessionContent = prefs.getAll();
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         //navigationView.setItemTextColor(ColorStateList.valueOf(Color.WHITE)); Meter aqui a cor primaria
         navigationView.setNavigationItemSelectedListener(this);
+
+        Menu menu = navigationView.getMenu();
+        menu.findItem(R.id.nav_name).setTitle((String) sessionContent.get("name"));
+        menu.findItem(R.id.nav_email).setTitle((String) sessionContent.get("email"));
+        menu.findItem(R.id.nav_nif).setTitle((String) sessionContent.get("nif"));
     }
 
     @Override
@@ -64,7 +92,7 @@ public class HomepageActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds databaseHelper to the action bar if it is present.
         getMenuInflater().inflate(R.menu.homepage, menu);
         return true;
     }
@@ -91,7 +119,7 @@ public class HomepageActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_logout) {
-            User.delete();
+            SessionManager.deleteSession(prefs, databaseHelper.getWritableDatabase());
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
         }
@@ -109,7 +137,9 @@ public class HomepageActivity extends AppCompatActivity
     private void addItemsToDatabase(JSONArray its) throws JSONException {
         System.out.println(its.toString());
 
-        db = items.getWritableDatabase();
+        db = databaseHelper.getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS Items");
+        db.execSQL("CREATE TABLE Items(_id INTEGER PRIMARY KEY AUTOINCREMENT,item_id INTEGER, name TEXT, price REAL, type TEXT);");
         ContentValues values = new ContentValues();
         JSONObject item;
         for(int i = 0;i < its.length(); i++) {

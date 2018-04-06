@@ -1,17 +1,19 @@
 package org.feup.cmov.acmecoffee;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import org.feup.cmov.acmecoffee.Model.User;
+import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.JSONCreater;
+import org.feup.cmov.acmecoffee.Utils.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,6 +23,9 @@ import java.util.concurrent.ExecutionException;
 public class LoginActivity extends AppCompatActivity {
     private EditText email, password;
 
+    SharedPreferences prefs;
+    private DatabaseHelper databaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
 
         email = findViewById(R.id.login_email);
         password = findViewById(R.id.login_password);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        databaseHelper = new DatabaseHelper(this);
 
         Button btnLogin = findViewById(R.id.login_button);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -41,8 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         btnGoToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(),HomepageActivity.class);
-                //Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
                 startActivity(intent);
             }
         });
@@ -61,9 +68,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(response != null) {
                     message = new JSONObject(response);
-                    User.createUser(message.getLong("id"), message.getString("email"),
-                            message.getString("name"),message.getString("nif"), message.getString("vouchers"));
-                    Log.d("INFO", User.getInstance().toString());
+                    SessionManager.createSession(message, prefs);
+                    databaseHelper.addVouchers(message.getString("vouchers"), databaseHelper.getWritableDatabase());
                     Intent intent = new Intent(getApplicationContext(),HomepageActivity.class);
                     startActivity(intent);
                 }
