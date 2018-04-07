@@ -66,9 +66,9 @@ public class CustomerController {
 
     }
 
-    @RequestMapping("/vouchers/{email}")
-    public ResponseEntity<String> getCustomerVouchers(@PathVariable("email") String email) throws JSONException {
-        Customer result = repository.findByEmail(email);
+    @RequestMapping("/vouchers/{id}")
+    public ResponseEntity<String> getCustomerVouchers(@PathVariable("id") Long id) throws JSONException {
+        Customer result = repository.findOne(id);
 
         if(result != null) {
             return new ResponseEntity<>(result.getVouchersJSON(), HttpStatus.OK);

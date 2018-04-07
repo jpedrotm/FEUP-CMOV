@@ -151,4 +151,34 @@ public class HttpHandler {
         return response;
     }
 
+    public static String getCustomerVouchers(Long id) {
+        String response = null;
+
+        try {
+            url = new URL("http://" + DOMAIN + "/customer/vouchers/" + id);
+            System.out.println(url.toString());
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setUseCaches(false);
+
+            // get response
+            int responseCode = urlConnection.getResponseCode();
+
+            if(responseCode == HttpURLConnection.HTTP_OK) {
+                response = readStream(urlConnection.getInputStream());
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        finally {
+            if(urlConnection != null)
+                urlConnection.disconnect();
+        }
+
+        return response;
+    }
+
 }

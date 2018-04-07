@@ -17,10 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.SessionManager;
+import org.feup.cmov.acmecoffee.Utils.ToastManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -29,7 +31,10 @@ import java.util.Map;
 public class HomepageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    DrawerLayout drawer;
+
     private SharedPreferences prefs;
+    Map<String, ?> sessionContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,26 +43,21 @@ public class HomepageActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        sessionContent = prefs.getAll();
 
         DatabaseHelper.getInstance(this).getVouchers();
-
-        GetItems getItems = new GetItems(this);
-        Thread thr = new Thread(getItems);
-        thr.start();
 
         setNavigationViewItemsTitle();
     }
 
     private void setNavigationViewItemsTitle() {
-        Map<String, ?> sessionContent = prefs.getAll();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         //navigationView.setItemTextColor(ColorStateList.valueOf(Color.WHITE)); Meter aqui a cor primaria
         navigationView.setNavigationItemSelectedListener(this);
@@ -86,15 +86,21 @@ public class HomepageActivity extends AppCompatActivity
 
         if (id == R.id.nav_logout) {
             SessionManager.deleteSession(prefs);
+            DatabaseHelper.getInstance(this).deleteVouchers();
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
-        } else if(id == R.id.update_app_info) {
-
+        } else if(id == R.id.update_user_vouchers) {
+            GetCustomerVouchers getCustomerVouchers = new GetCustomerVouchers(this, (Long) sessionContent.get("id"));
+            Thread thr = new Thread(getCustomerVouchers);
+            thr.start();
+        } else if(id == R.id.update_menu) {
+            GetItems getItems = new GetItems(this);
+            Thread thr = new Thread(getItems);
+            thr.start();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return false;
     }
 
     public void goToMenu(View view) {
@@ -122,9 +128,59 @@ public class HomepageActivity extends AppCompatActivity
                 try {
                     DatabaseHelper.getInstance(context).updateItemsTable(new JSONArray(response));
                     DatabaseHelper.getInstance(context).getItems();
+                    runOnUiThread(new Runnable() {
+                        public void run()
+                        {
+                            Toast.makeText(context, ToastManager.ITEMS_LOAD_SUCCESS, Toast.LENGTH_LONG).show();
+                        }
+                    });
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        public void run()
+                        {
+                            Toast.makeText(context, ToastManager.ITEMS_LOAD_ERROR, Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
+            } else {
+                runOnUiThread(new Runnable() {
+                    public void run()
+                    {
+                        Toast.makeText(context, ToastManager.ITEMS_LOAD_ERROR, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+    }
+
+    private class GetCustomerVouchers implements Runnable {
+        Context context = null;
+        Long id;
+
+        GetCustomerVouchers(Context context, Long id) {
+            this.context = context;
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+            String response = HttpHandler.getCustomerVouchers(id);
+
+            if(response != null) {
+                DatabaseHelper.getInstance(context).updateVouchersTable(response);
+                runOnUiThread(new Runnable() {
+                    public void run()
+                    {
+                        Toast.makeText(context, ToastManager.VOUCHERS_LOAD_SUCCESS, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                runOnUiThread(new Runnable() {
+                    public void run()
+                    {
+                        Toast.makeText(context, ToastManager.VOUCHERS_LOAD_ERROR, Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         }
     }

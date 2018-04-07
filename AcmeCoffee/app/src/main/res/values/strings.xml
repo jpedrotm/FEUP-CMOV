@@ -25,7 +25,8 @@
     <string name="email">Email</string>
     <string name="name">Name</string>
     <string name="nif">NIF</string>
-    <string name="update_info">Update App</string>
+    <string name="update_voucher">Update Voucher</string>
+    <string name="update_menu">Update Menu</string>
     <string name="logout">Logout</string>
 
     <!-- Relativo aos vouchers -->

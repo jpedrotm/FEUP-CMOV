@@ -70,9 +70,8 @@ public class Customer implements Serializable {
 	    for(Voucher v: vouchers) {
 	        array.put(v.toString());
         }
-        JSONObject response = new JSONObject();
-	    response.put("vouchers",array);
-	    return response.toString();
+
+	    return array.toString();
     }
 
 	@Override
