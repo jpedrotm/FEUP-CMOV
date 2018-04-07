@@ -88,6 +88,8 @@ public class HomepageActivity extends AppCompatActivity
             SessionManager.deleteSession(prefs);
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
+        } else if(id == R.id.update_app_info) {
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

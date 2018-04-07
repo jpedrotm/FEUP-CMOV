@@ -1,13 +1,8 @@
 package com.springjpa.controller;
 
-import com.springjpa.model.Customer;
-import com.springjpa.model.Item;
-import com.springjpa.model.Request;
-import com.springjpa.model.RequestLine;
-import com.springjpa.repo.CustomerRepository;
-import com.springjpa.repo.ItemRepository;
-import com.springjpa.repo.RequestLineRepository;
-import com.springjpa.repo.RequestRepository;
+import com.springjpa.model.*;
+import com.springjpa.repo.*;
+import com.springjpa.utils.MetadataManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +25,9 @@ public class RequestController {
 
     @Autowired
     RequestLineRepository requestLineRepository;
+
+    @Autowired
+    VoucherRepository voucherRepository;
 
     @Autowired
     ItemRepository itemRepository;
