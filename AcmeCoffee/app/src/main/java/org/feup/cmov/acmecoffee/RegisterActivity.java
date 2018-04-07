@@ -96,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
             RegisterAsync ra = new RegisterAsync();
             try {
                 JSONObject message = JSONCreater.convertToJSON(JSONCreater.FormType.REGISTER_FORM,
-                        Arrays.asList(emailText, nameText, BCrypt.hashpw(passwordText, BCrypt.gensalt()), nifText));
+                        Arrays.asList(emailText, nameText, passwordText, nifText));
                 String response = ra.execute(message).get();
                 if(response != null) {
                     message = new JSONObject(response);

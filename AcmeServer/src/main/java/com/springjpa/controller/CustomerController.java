@@ -20,7 +20,7 @@ public class CustomerController {
 	@RequestMapping(value = "/save", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> process(@RequestBody String customer) throws JSONException {
         JSONObject cus = new JSONObject(customer);
-        Customer newCustomer = new Customer(cus.getString("email"),cus.getString("name"), cus.getString("password"), cus.getString("nif"));
+        Customer newCustomer = new Customer(cus.getString("email"),cus.getString("name"), BCrypt.hashpw(cus.getString("password"), BCrypt.gensalt()), cus.getString("nif"));
         if(repository.save(newCustomer) != null) {
             return new ResponseEntity<>(newCustomer.toString(), HttpStatus.CREATED);
         }
