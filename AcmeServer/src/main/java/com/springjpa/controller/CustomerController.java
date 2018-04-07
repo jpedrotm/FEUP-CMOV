@@ -1,5 +1,6 @@
 package com.springjpa.controller;
 
+import com.springjpa.utils.BCrypt;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,7 @@ public class CustomerController {
         Customer result = repository.findByEmail(fields.getString("email"));
 
         if(result != null) {
-            if(result.getPassword().equals(fields.getString("password"))) {
+            if(BCrypt.checkpw(fields.getString("password"), result.getPassword())) {
                 return new ResponseEntity<>(result.toString(), HttpStatus.ACCEPTED);
             } else {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);

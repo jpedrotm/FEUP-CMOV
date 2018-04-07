@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.feup.cmov.acmecoffee.Utils.BCrypt;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.JSONCreater;
 import org.feup.cmov.acmecoffee.Utils.SessionManager;
@@ -95,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
             RegisterAsync ra = new RegisterAsync();
             try {
                 JSONObject message = JSONCreater.convertToJSON(JSONCreater.FormType.REGISTER_FORM,
-                        Arrays.asList(emailText, nameText, passwordText, nifText));
+                        Arrays.asList(emailText, nameText, BCrypt.hashpw(passwordText, BCrypt.gensalt()), nifText));
                 String response = ra.execute(message).get();
                 if(response != null) {
                     message = new JSONObject(response);
