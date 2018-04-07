@@ -9,11 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.JSONCreater;
 import org.feup.cmov.acmecoffee.Utils.SessionManager;
+import org.feup.cmov.acmecoffee.Utils.ToastManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,7 +26,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText email, password;
 
     SharedPreferences prefs;
-    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +36,12 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.login_password);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        databaseHelper = new DatabaseHelper(this);
 
         Button btnLogin = findViewById(R.id.login_button);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoginAsyncTask();
+                loginAsyncTask();
             }
         });
 
@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void LoginAsyncTask() {
+    private void loginAsyncTask() {
         String emailText = email.getText().toString();
         String passwordText = password.getText().toString();
 
@@ -69,9 +69,11 @@ public class LoginActivity extends AppCompatActivity {
                 if(response != null) {
                     message = new JSONObject(response);
                     SessionManager.createSession(message, prefs);
-                    databaseHelper.addVouchers(message.getString("vouchers"), databaseHelper.getWritableDatabase());
+                    DatabaseHelper.getInstance(this).updateVouchersTable(message.getString("vouchers"));
                     Intent intent = new Intent(getApplicationContext(),HomepageActivity.class);
                     startActivity(intent);
+                } else {
+                    toastMessage(ToastManager.WRONG_FIELDS_LOGIN);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -81,6 +83,14 @@ public class LoginActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void toastMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private static class LoginAsync extends AsyncTask<JSONObject, String, String> {

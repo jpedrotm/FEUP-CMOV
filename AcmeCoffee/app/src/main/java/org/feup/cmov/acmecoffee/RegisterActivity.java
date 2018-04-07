@@ -49,7 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RegisterAsyncTask();
+                registerAsyncTask();
             }
         });
 
@@ -65,17 +65,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean checkFields(String email, String name, String password, String passwordConfirmation, String nif) {
        if(!validatePassword(password, passwordConfirmation)) {
-           Toast.makeText(getApplicationContext(), ToastManager.WRONG_PASSWORDS, Toast.LENGTH_LONG).show();
+           toastMessage(ToastManager.WRONG_PASSWORDS);
            return false;
        }
        else if(!validateNif(nif)) {
-            Toast.makeText(getApplicationContext(), ToastManager.WRONG_NIF, Toast.LENGTH_LONG).show();
+            toastMessage(ToastManager.WRONG_NIF);
             return false;
         }
-        else if(false) { // verificar email
-           Toast.makeText(getApplicationContext(), ToastManager.WRONG_EMAIL, Toast.LENGTH_LONG).show();
-           return false;
-       }
 
         return true;
     }
@@ -88,7 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
         return nif.length() == 9 && nif.matches("[0-9]+");
     }
 
-    private void RegisterAsyncTask() {
+    private void registerAsyncTask() {
         String emailText = email.getText().toString();
         String nameText = name.getText().toString();
         String passwordText = password.getText().toString();
@@ -106,6 +102,8 @@ public class RegisterActivity extends AppCompatActivity {
                     SessionManager.createSession(message, prefs);
                     Intent intent = new Intent(getApplicationContext(), HomepageActivity.class);
                     startActivity(intent);
+                } else {
+                    toastMessage(ToastManager.WRONG_REGISTER);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -115,6 +113,14 @@ public class RegisterActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void toastMessage(final String message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private static class RegisterAsync extends AsyncTask<JSONObject, String, String> {

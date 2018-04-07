@@ -23,7 +23,6 @@ import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.SessionManager;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Map;
 
@@ -31,9 +30,6 @@ public class HomepageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private SharedPreferences prefs;
-
-    private DatabaseHelper databaseHelper;
-    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +46,7 @@ public class HomepageActivity extends AppCompatActivity
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        databaseHelper = new DatabaseHelper(this);
-        SQLiteDatabase database = databaseHelper.getReadableDatabase();
-
-        Cursor cursor = database.rawQuery("SELECT voucher_id, type FROM vouchers",
-                null);
-
-        while(cursor.moveToNext()) {
-            System.out.println("AQUI VAI: " + cursor.getLong(0) + " ; " +cursor.getString(1));
-        }
+        DatabaseHelper.getInstance(this).getVouchers();
 
         GetItems getItems = new GetItems(this);
         Thread thr = new Thread(getItems);
@@ -90,28 +78,6 @@ public class HomepageActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds databaseHelper to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.homepage, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -119,7 +85,7 @@ public class HomepageActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_logout) {
-            SessionManager.deleteSession(prefs, databaseHelper.getWritableDatabase());
+            SessionManager.deleteSession(prefs);
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
         }
@@ -134,22 +100,9 @@ public class HomepageActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private void addItemsToDatabase(JSONArray its) throws JSONException {
-        System.out.println(its.toString());
-
-        db = databaseHelper.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS Items");
-        db.execSQL("CREATE TABLE Items(_id INTEGER PRIMARY KEY AUTOINCREMENT,item_id INTEGER, name TEXT, price REAL, type TEXT);");
-        ContentValues values = new ContentValues();
-        JSONObject item;
-        for(int i = 0;i < its.length(); i++) {
-            item = new JSONObject(its.getString(i));
-            values.put("item_id", item.getString("id"));
-            values.put("name", item.getString("name"));
-            values.put("price", item.getLong("price"));
-            values.put("type", item.getString("type"));
-            db.insert("Items", null, values);
-        }
+    public void goToVouchers(View view){
+        Intent intent = new Intent(getApplicationContext(), ViewVouchersActivity.class);
+        startActivity(intent);
     }
 
     private class GetItems implements Runnable {
@@ -162,16 +115,15 @@ public class HomepageActivity extends AppCompatActivity
         @Override
         public void run() {
             String response = HttpHandler.getAllItems();
-            try {
-                addItemsToDatabase(new JSONArray(response));
-            } catch (JSONException e) {
-                e.printStackTrace();
+
+            if(response != null) {
+                try {
+                    DatabaseHelper.getInstance(context).updateItemsTable(new JSONArray(response));
+                    DatabaseHelper.getInstance(context).getItems();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
-    }
-
-    public void goToVouchers(View view){
-        Intent intent = new Intent(getApplicationContext(), ViewVouchersActivity.class);
-        startActivity(intent);
     }
 }

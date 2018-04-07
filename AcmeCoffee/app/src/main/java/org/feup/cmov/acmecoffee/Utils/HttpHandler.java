@@ -15,7 +15,7 @@ public class HttpHandler {
     private static URL url;
     private static HttpURLConnection urlConnection = null;
 
-    public static String DOMAIN = "8d359fb9.ngrok.io";
+    public static String DOMAIN = "182c7dd5.ngrok.io";
 
     private static String readStream(InputStream in) {
         BufferedReader reader = null;
@@ -69,7 +69,6 @@ public class HttpHandler {
 
             if(responseCode == HttpURLConnection.HTTP_CREATED) {
                 customerInfo = readStream(urlConnection.getInputStream());
-                System.out.println(customerInfo);
             }
         }
         catch (Exception e) {
@@ -124,8 +123,6 @@ public class HttpHandler {
 
     public static String getAllItems() {
         String response = null;
-
-        Log.d("ITEMS", "ALL");
 
         try {
             url = new URL("http://" + DOMAIN + "/item/findall");

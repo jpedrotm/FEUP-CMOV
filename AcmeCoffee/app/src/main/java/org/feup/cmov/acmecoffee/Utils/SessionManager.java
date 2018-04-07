@@ -22,8 +22,7 @@ public class SessionManager {
         }
     }
 
-    public static void deleteSession(SharedPreferences prefs, SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXISTS Vouchers");
+    public static void deleteSession(SharedPreferences prefs) {
         prefs.edit().clear().apply();
     }
 }

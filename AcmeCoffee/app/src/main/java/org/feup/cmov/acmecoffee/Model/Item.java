@@ -1,41 +1,54 @@
 package org.feup.cmov.acmecoffee.Model;
 
 public class Item {
+    private Long id;
     private String name;
-    private String price;
-    private itemType type;
-    private String image; //tenho de ver melhor isto da imagem mas podemos ter uma para cada tipo
+    private double price;
+    private ItemType type;
 
-    public Item(String name, String price, itemType type, String image) {
+    public Item(Long id, String name, double price, String type) {
+        this.id = id;
         this.name = name;
         this.price = price;
-        this.type = type;
-        this.image = image;
+        this.type = getTypeFromString(type);
+    }
+
+    private ItemType getTypeFromString(String t) {
+        switch(t) {
+            case "DRINKS":
+                return ItemType.DRINKS;
+            case "SNACKS":
+                return ItemType.SNACKS;
+            case "MEALS":
+                return ItemType.MEALS;
+            case "COFFEE":
+                return ItemType.COFFEE;
+            case "CAKES":
+                return ItemType.CAKES;
+            default:
+                return null;
+        }
     }
 
     public String getName() {
         return name;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public itemType getType() {
+    public ItemType getType() {
         return type;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
 
 
-    public enum itemType {
+    public enum ItemType {
         DRINKS, SNACKS, MEALS, COFFEE, CAKES
     }
 
