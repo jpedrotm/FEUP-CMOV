@@ -65,13 +65,13 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/textView5"
-                        android:layout_width="match_parent"
+                        android:id="@+id/freecoffee_quantity"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textColor="@color/colorPrimary"
                         android:layout_weight="1"
-                        android:text="@string/quantity" />
+                        android:text="@string/quantity"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="20sp" />
 
                 </LinearLayout>
 
@@ -144,7 +144,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/textView6"
+                        android:id="@+id/discount_quantity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

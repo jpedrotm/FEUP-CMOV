@@ -1,0 +1,97 @@
+package org.feup.cmov.acmecoffee;
+
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
+import org.feup.cmov.acmecoffee.Model.Item;
+
+import java.util.ArrayList;
+
+public class AddItemActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    ArrayList<String> itemsNames = new ArrayList<>();
+
+    ArrayList<Item> items = new ArrayList<>();
+    private Spinner itemsSpinner;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_item);
+        fillSpinner();
+
+    }
+
+    public void fillSpinner(){
+        items = DatabaseHelper.getInstance(this).getItems();
+
+        for(int i = 0; i < items.size(); i++){
+            itemsNames.add(items.get(i).getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, itemsNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        itemsSpinner = (Spinner) findViewById(R.id.items_spinner);
+        itemsSpinner.setAdapter(adapter);
+        itemsSpinner.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String selectedItem = adapterView.getItemAtPosition(i).toString();
+        Toast.makeText(adapterView.getContext(),selectedItem,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
+    public void addSelectedItem(View view){
+        String name = (itemsSpinner.getSelectedItem().toString());
+        double price = getSelectedItemPrice(name);
+        Item.ItemType type = getSelectedItemType(name);
+
+        Intent intent = new Intent();
+        intent.putExtra("newName",name);
+        intent.putExtra("newPrice",price);
+        intent.putExtra("newType",type.name());
+        setResult(RequestActivity.RESULT_OK,intent);
+        finish();
+
+    }
+
+    public double getSelectedItemPrice(String name){
+        double price = 0;
+        for (int i = 0; i < items.size(); i++){
+            if(name == items.get(i).getName()){
+                price = items.get(i).getPrice();
+
+            }
+        }
+        return price;
+    }
+
+    public Item.ItemType getSelectedItemType(String name){
+        Item.ItemType type = null;
+        for (int i = 0; i < items.size(); i++){
+            if(name == items.get(i).getName()){
+                type = items.get(i).getType();
+
+            }
+
+        }
+        return type;
+    }
+
+
+}

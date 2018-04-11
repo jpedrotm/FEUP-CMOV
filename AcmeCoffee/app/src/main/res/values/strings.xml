@@ -36,4 +36,11 @@
     <string name="coffee_description">One free coffee voucher is offered to the costumer whenever he consumes 3 coffees.</string>
     <string name="discount_description">A 5% discount voucher is offered whenever the accumulated payed values from a customer surpasses a new multiple of 100€.</string>
     <string name="quantity">Quantity: </string>
+    <string name="title_activity_request">RequestActivity</string>
+
+    <!-- Relativo aos pedidos -->
+    <string name="total">Total:  </string>
+    <string name="add_item">Add Item</string>
+    <string name="send_request">Send</string>
+    <string name="add_selected_item">Add selected item</string>
 </resources>

@@ -33,6 +33,17 @@ public class Voucher {
         }
     }
 
+    public String getStringFromType(VoucherType type){
+        switch(type) {
+            case FREE_COFFEE:
+                return "FREE_COFFEE";
+            case FIVE_PERCENT_DISCOUNT:
+                return "FIVE_PERCENT_DISCOUNT";
+            default:
+                return "Not a valid voucher type.";
+        }
+    }
+
     public String getDescription() {
         return description;
     }
