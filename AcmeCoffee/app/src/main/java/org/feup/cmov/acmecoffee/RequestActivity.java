@@ -1,7 +1,6 @@
 package org.feup.cmov.acmecoffee;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,43 +10,52 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
-
 import java.util.ArrayList;
 
-public class ViewMenuActivity extends AppCompatActivity {
+public class RequestActivity extends AppCompatActivity {
 
-    int[] IMAGES = {R.drawable.ic_menu_gallery,R.drawable.ic_menu_gallery,R.drawable.ic_menu_gallery,R.drawable.ic_menu_gallery};
-    ArrayList<String> NAMES = new ArrayList<>();
-    ArrayList<Double> PRICES = new ArrayList<>();
-    ArrayList<String> TYPES = new ArrayList<>();
+    public  ArrayList<String> NAMES = new ArrayList<>();
+    public  ArrayList<Double> PRICES = new ArrayList<>();
+    public  ArrayList<String> TYPES = new ArrayList<>();
+    public  TextView total;
+    public  double totalMoney;
+    public static final int STATIC_INT_VALUE = 10;
+    public static final int RESULT_OK = 11;
+    public CustomAdapter cursorAdapter = new CustomAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_menu);
+        setContentView(R.layout.activity_request);
+        totalMoney = 0;
+        total = (TextView) findViewById(R.id.total_money);
 
-        fieldViewData();
 
-        CustomAdapter cursorAdapter = new CustomAdapter();
-
-        ListView listView = (ListView) findViewById(R.id.listView);
+        ListView listView = (ListView) findViewById(R.id.requestListView);
         listView.setAdapter(cursorAdapter);
-    }
-    private void fieldViewData() {
-        DatabaseHelper items = new DatabaseHelper(this);
-        SQLiteDatabase db = items.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT name, price, type FROM items",
-                null);
 
-        while(cursor.moveToNext()) {
-            NAMES.add(cursor.getString(0));
-            PRICES.add(cursor.getDouble(1));
-            TYPES.add(cursor.getString(2));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        double defaultValue = 0;
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case(STATIC_INT_VALUE) : {
+                if(resultCode == RESULT_OK){
+                    String name = data.getStringExtra("newName");
+                    double price = data.getDoubleExtra("newPrice",defaultValue);
+                    String type = data.getStringExtra("newType");
+                    System.out.println("NAME " +name + "PRICE " + price + "TYPE " + type);
+                    addItemToRequest(name,price,type);
+                }
+                break;
+            }
         }
+
     }
 
-    class CustomAdapter extends BaseAdapter{
+    class CustomAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -66,12 +74,12 @@ public class ViewMenuActivity extends AppCompatActivity {
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
+
             view = getLayoutInflater().inflate(R.layout.customlayout,null);
 
             ImageView imageView = (ImageView)view.findViewById(R.id.imageView2);
             TextView textView_name = (TextView)view.findViewById(R.id.textView_name);
             TextView textView_amount = (TextView)view.findViewById(R.id.textView_amount);
-
             switch(TYPES.get(i)){
                 case("DRINKS"):
                     imageView.setImageResource(R.drawable.ic_drinks);
@@ -92,10 +100,31 @@ public class ViewMenuActivity extends AppCompatActivity {
                     imageView.setImageResource(R.drawable.ic_warning_black_24dp);
                     break;
             }
-
             textView_name.setText(NAMES.get(i));
             textView_amount.setText(String.valueOf(PRICES.get(i)));
             return view;
         }
     }
+
+    public void goToAddItem(View view){
+        Intent intent = new Intent(getApplicationContext(), AddItemActivity.class);
+        startActivityForResult(intent,STATIC_INT_VALUE );
+    }
+
+
+
+    public  void addItemToRequest(String name, double price, String type) {
+        NAMES.add(name);
+        PRICES.add(price);
+        TYPES.add(type);
+        updateTotal(price);
+        cursorAdapter.notifyDataSetChanged();
+
+    }
+
+    public void updateTotal(double price){
+        totalMoney = totalMoney + 1;
+        total.setText("Total: " + totalMoney);
+    }
+
 }

@@ -105,6 +105,11 @@ public class HomepageActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void goToRequest(View view){
+        Intent intent = new Intent(getApplicationContext(), RequestActivity.class);
+        startActivity(intent);
+    }
+
     private class GetItems implements Runnable {
         Context context = null;
 
