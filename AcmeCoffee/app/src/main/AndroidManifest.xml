@@ -31,6 +31,7 @@
         <activity android:name=".ViewVouchersActivity" />
         <activity android:name=".RequestActivity" />
         <activity android:name=".AddItemActivity" />
+        <activity android:name=".QRCodeActivity" />
     </application>
 
 </manifest>

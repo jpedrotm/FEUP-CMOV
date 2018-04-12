@@ -20,7 +20,7 @@ public class Item implements Serializable{
     private String name;
 
     @Column(name = "price")
-    private String price;
+    private Double price;
 
     @Enumerated(EnumType.STRING)
     private ItemType type;
@@ -32,7 +32,7 @@ public class Item implements Serializable{
 
     protected Item() {}
 
-    public Item(String name, String price,ItemType type) {
+    public Item(String name, Double price,ItemType type) {
         this.name = name;
         this.price = price;
         this.type = type;
@@ -42,7 +42,7 @@ public class Item implements Serializable{
         return name;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 

@@ -57,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             item = new JSONObject(items.getString(i));
             values.put("item_id", item.getString("id"));
             values.put("name", item.getString("name"));
-            values.put("price", item.getLong("price"));
+            values.put("price", item.getDouble("price"));
             values.put("type", item.getString("type"));
             db.insert("Items", null, values);
         }

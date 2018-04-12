@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class RequestActivity extends AppCompatActivity {
@@ -18,7 +21,7 @@ public class RequestActivity extends AppCompatActivity {
     public  ArrayList<String> NAMES = new ArrayList<>();
     public  ArrayList<Double> PRICES = new ArrayList<>();
     public  ArrayList<String> TYPES = new ArrayList<>();
-    public  ArrayList<Long> IDS = new ArrayList<>();
+    public  ArrayList<Integer> IDS = new ArrayList<>();
     public  TextView total;
     public  double totalMoney;
     public static final int STATIC_INT_VALUE = 10;
@@ -40,7 +43,11 @@ public class RequestActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("SENDDDDDDDDDD");
+                byte[] message = constructMessage();
+                System.out.println("SENDDDDDDDDDD " + message.length);
+                Intent intent = new Intent(getApplicationContext(), QRCodeActivity.class);
+                intent.putExtra("data", message);
+                startActivity(intent);
             }
         });
     }
@@ -48,7 +55,7 @@ public class RequestActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         double defaultValue = 0;
-        Long defaultId = Long.valueOf(-1);
+        int defaultId = -1;
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case(STATIC_INT_VALUE) : {
@@ -56,7 +63,7 @@ public class RequestActivity extends AppCompatActivity {
                     String name = data.getStringExtra("newName");
                     double price = data.getDoubleExtra("newPrice",defaultValue);
                     String type = data.getStringExtra("newType");
-                    Long id = data.getLongExtra("id", defaultId);
+                    int id = data.getIntExtra("id", defaultId);
                     System.out.println("NAME " +name + "PRICE " + price + "TYPE " + type);
                     addItemToRequest(name, price, type, id);
                 }
@@ -64,6 +71,29 @@ public class RequestActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private byte[] constructMessage() {
+        int nr = IDS.size();                                  //
+        ByteBuffer bb = ByteBuffer.allocate(nr+1); // wrap and allocate a byte[] for message and signature
+        bb.put((byte) nr);
+
+        for (int k=0; k<nr; k++)
+            bb.put(IDS.get(k).byteValue());                   // put each type (times nr. of items)
+        byte[] message = bb.array();                           // get the byte[] for signing
+
+        return message;
+
+        /* int nitems = ad.getCount();
+        for (int k = 0; k < nitems; k++)
+            if (ad.getItem(k).selected)
+                sels.add(ad.getItem(k).type);                  // list of selected items
+        int nr = sels.size();                                  // nr. of selected items
+        ByteBuffer bb = ByteBuffer.allocate((nr+1)+512/8);     // wrap and allocate a byte[] for message and signature
+        bb.put((byte) nr);                                      // put the nr. of elements
+        for (int k=0; k<nr; k++)
+            bb.put(sels.get(k).byteValue());                   // put each type (times nr. of items)
+        byte[] message = bb.array();                           // get the byte[] for signing */
     }
 
     class CustomAdapter extends BaseAdapter {
@@ -122,20 +152,17 @@ public class RequestActivity extends AppCompatActivity {
         startActivityForResult(intent,STATIC_INT_VALUE );
     }
 
-
-
-    public  void addItemToRequest(String name, double price, String type, Long id) {
+    public  void addItemToRequest(String name, double price, String type, int id) {
         NAMES.add(name);
         PRICES.add(price);
         TYPES.add(type);
         IDS.add(id);
         updateTotal(price);
         cursorAdapter.notifyDataSetChanged();
-
     }
 
     public void updateTotal(double price){
-        totalMoney = totalMoney + 1;
+        totalMoney += price;
         total.setText("Total: " + totalMoney);
     }
 

@@ -25,7 +25,7 @@ public class ItemController {
     public ResponseEntity process(@RequestBody String item) throws JSONException {
         JSONObject itm = new JSONObject(item);
         Item.ItemType type = Item.getItemTypeByString(itm.getString("type"));
-        Item newItem = new Item(itm.getString("name"),itm.getString("price"), type);
+        Item newItem = new Item(itm.getString("name"),itm.getDouble("price"), type);
 
         if(itemRepository.save(newItem) != null) {
             return new ResponseEntity(HttpStatus.CREATED);

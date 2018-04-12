@@ -57,7 +57,7 @@ public class RequestController {
         for(int i=0;i<items.length();i++) {
             tmpItemJSON = items.getJSONObject(i);
             tmpItem = itemRepository.findOne(tmpItemJSON.getLong("item_id"));
-            finalPrice += Double.parseDouble(tmpItem.getPrice());
+            finalPrice += tmpItem.getPrice();
             rl = new RequestLine(newRequest, tmpItem, tmpItemJSON.getInt("quantity"));
             requestLineRepository.save(rl);
         }

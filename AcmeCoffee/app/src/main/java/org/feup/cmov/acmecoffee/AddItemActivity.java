@@ -61,7 +61,7 @@ public class AddItemActivity extends AppCompatActivity implements AdapterView.On
             intent.putExtra("newName",name);
             intent.putExtra("newPrice",item.getPrice());
             intent.putExtra("newType",item.getType().name());
-            intent.putExtra("id", item.getId());
+            intent.putExtra("id", item.getId().intValue());
             System.out.println("ID: " + item.getId());
             setResult(RequestActivity.RESULT_OK,intent);
             finish();
