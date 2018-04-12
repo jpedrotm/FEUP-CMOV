@@ -69,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(response != null) {
                     message = new JSONObject(response);
                     SessionManager.createSession(message, prefs);
+
                     DatabaseHelper.getInstance(this).updateVouchersTable(message.getString("vouchers"));
                     Intent intent = new Intent(getApplicationContext(),HomepageActivity.class);
                     startActivity(intent);

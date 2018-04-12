@@ -43,7 +43,7 @@ public class QRCodeActivity extends AppCompatActivity {
 
         try {
             qr_content = new String(content, CH_SET);
-            System.out.println("CONTENT: " +qr_content);
+            System.out.println("CONTENT: " +qr_content.length());
             //ByteBuffer bb = ByteBuffer.wrap(content);
             //byte[] mess = new byte[mess_size];
             //byte[] sign = new byte[sign_size];

@@ -118,6 +118,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void deleteVouchers() {
+        vouchers = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS Vouchers");
     }

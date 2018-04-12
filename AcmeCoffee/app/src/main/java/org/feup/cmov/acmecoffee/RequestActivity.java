@@ -44,7 +44,6 @@ public class RequestActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 byte[] message = constructMessage();
-                System.out.println("SENDDDDDDDDDD " + message.length);
                 Intent intent = new Intent(getApplicationContext(), QRCodeActivity.class);
                 intent.putExtra("data", message);
                 startActivity(intent);
