@@ -43,4 +43,9 @@
     <string name="add_item">Add Item</string>
     <string name="send_request">Send</string>
     <string name="add_selected_item">Add selected item</string>
+    <string name="select_voucher">Use a voucher: </string>
+    <string name="free_coffee">Free coffee</string>
+    <string name="five_discount">5% Discount</string>
+    <string name="no_voucher">No voucher</string>
+    <string name="select_item">Choose item</string>
 </resources>

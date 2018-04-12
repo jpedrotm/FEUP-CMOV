@@ -10,9 +10,66 @@
     <ListView
         android:id="@+id/requestListView"
         android:layout_width="match_parent"
-        android:layout_height="459dp">
+        android:layout_height="391dp">
 
     </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/total_money2"
+            android:layout_width="match_parent"
+            android:layout_height="47dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:text="@string/select_voucher"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="25dp"
+        >
+
+        <RadioGroup
+            android:id="@+id/voucherGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/freeCoffeeRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/free_coffee"
+                android:clickable="false"/>
+
+            <RadioButton
+                android:id="@+id/fiveDiscountRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/five_discount"
+                android:clickable="false"/>
+
+            <RadioButton
+                android:id="@+id/noVoucherRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/no_voucher"
+                />
+        </RadioGroup>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,8 +92,8 @@
             android:layout_width="25dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/add_item"
-            android:onClick="goToAddItem"/>
+            android:onClick="goToAddItem"
+            android:text="@string/add_item" />
 
         <Button
             android:id="@+id/sendRequest"
@@ -46,4 +103,5 @@
             android:text="@string/send_request" />
 
     </LinearLayout>
+
 </LinearLayout>

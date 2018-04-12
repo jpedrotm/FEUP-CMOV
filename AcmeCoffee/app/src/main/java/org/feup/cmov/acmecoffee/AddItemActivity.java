@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Model.Item;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -19,11 +21,13 @@ public class AddItemActivity extends AppCompatActivity implements AdapterView.On
     ArrayList<String> itemsNames = new ArrayList<>();
     ArrayList<Item> items = new ArrayList<>();
     private Spinner itemsSpinner;
+    TextView priceInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
+        priceInfo = (TextView) findViewById(R.id.princeInfo);
         fillSpinner();
     }
 
@@ -43,8 +47,12 @@ public class AddItemActivity extends AppCompatActivity implements AdapterView.On
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+
         String selectedItem = adapterView.getItemAtPosition(i).toString();
-        Toast.makeText(adapterView.getContext(),selectedItem,Toast.LENGTH_SHORT).show();
+        String itemPrice= Double.toString(getSelectedItem(selectedItem).getPrice());
+        priceInfo.setText(itemPrice + "€");
+       // Toast.makeText(adapterView.getContext(),selectedItem,Toast.LENGTH_SHORT).show();
     }
 
     @Override

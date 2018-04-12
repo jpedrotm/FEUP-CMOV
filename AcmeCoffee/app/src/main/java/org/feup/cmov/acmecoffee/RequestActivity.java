@@ -7,9 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
+import org.feup.cmov.acmecoffee.Model.Voucher;
 
 import org.json.JSONArray;
 
@@ -21,12 +28,18 @@ public class RequestActivity extends AppCompatActivity {
     public  ArrayList<String> NAMES = new ArrayList<>();
     public  ArrayList<Double> PRICES = new ArrayList<>();
     public  ArrayList<String> TYPES = new ArrayList<>();
+    public  ArrayList<Voucher> vouchers = new ArrayList<>();
     public  ArrayList<Integer> IDS = new ArrayList<>();
     public  TextView total;
     public  double totalMoney;
     public static final int STATIC_INT_VALUE = 10;
     public static final int RESULT_OK = 11;
     public CustomAdapter cursorAdapter = new CustomAdapter();
+    RadioGroup radioGroup;
+    RadioButton freeCoffee;
+    RadioButton fiveDiscount;
+    RadioButton noVoucher;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +47,14 @@ public class RequestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_request);
         totalMoney = 0;
         total = (TextView) findViewById(R.id.total_money);
-
-
+        radioGroup = (RadioGroup) findViewById(R.id.voucherGroup);
+        freeCoffee = (RadioButton) findViewById(R.id.freeCoffeeRadio);
+        fiveDiscount = (RadioButton) findViewById(R.id.fiveDiscountRadio);
+        noVoucher = (RadioButton) findViewById(R.id.noVoucherRadio);
         ListView listView = (ListView) findViewById(R.id.requestListView);
         listView.setAdapter(cursorAdapter);
+
+
 
         Button btnSend = (Button) findViewById(R.id.sendRequest);
         btnSend.setOnClickListener(new View.OnClickListener() {
@@ -48,8 +65,45 @@ public class RequestActivity extends AppCompatActivity {
                 intent.putExtra("data", message);
                 startActivity(intent);
             }
+
         });
+
+
+        checkAvailableVouchers();
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.freeCoffeeRadio){
+
+                    updateTotal(0,0);
+                }
+                if (checkedId == R.id.fiveDiscountRadio){
+                    updateTotal(0,1);
+                }
+                if ( checkedId == R.id.noVoucherRadio){
+                    updateTotal(0,0);
+                }
+            }
+        });
+
     }
+    public void checkAvailableVouchers(){
+        vouchers = DatabaseHelper.getInstance(this).getVouchers();
+
+        for(int i = 0; i < vouchers.size(); i++){
+            if(vouchers.get(i).getStringFromType(vouchers.get(i).getType()) == "FREE_COFFEE"){
+                freeCoffee.setClickable(true);
+            }
+            else  if(vouchers.get(i).getStringFromType(vouchers.get(i).getType()) == "FIVE_PERCENT_DISCOUNT"){
+                fiveDiscount.setClickable(true);
+            }
+        }
+
+    }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -156,13 +210,21 @@ public class RequestActivity extends AppCompatActivity {
         PRICES.add(price);
         TYPES.add(type);
         IDS.add(id);
-        updateTotal(price);
+        updateTotal(1,0);
         cursorAdapter.notifyDataSetChanged();
     }
 
-    public void updateTotal(double price){
-        totalMoney += price;
-        total.setText("Total: " + totalMoney);
+    public void updateTotal(double price, int discountVoucher){
+
+        if(discountVoucher == 0){
+            totalMoney = totalMoney  + price;
+            total.setText("Total: " + totalMoney);
+        }
+        else if ( discountVoucher == 1 ) {
+            total.setText("Total: " + (float)Math.round((totalMoney *0.95) * 100) / 100);
+        }
+
+
     }
 
 }
