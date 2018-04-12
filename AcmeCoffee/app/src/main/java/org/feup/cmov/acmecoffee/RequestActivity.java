@@ -210,7 +210,7 @@ public class RequestActivity extends AppCompatActivity {
         PRICES.add(price);
         TYPES.add(type);
         IDS.add(id);
-        updateTotal(1,0);
+        updateTotal(price,0);
         cursorAdapter.notifyDataSetChanged();
     }
 
