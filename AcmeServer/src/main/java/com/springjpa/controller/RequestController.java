@@ -38,8 +38,7 @@ public class RequestController {
             "customer_id":"",
             "items": [
                         {
-                            "item_id": "",
-                            "quantity": ""
+                            "item_id": ""
                         }
                     ]
         }*/
