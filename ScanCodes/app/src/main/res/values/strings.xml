@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Acme Coffee</string>
+    <string name="read_qr_code">Read QRCode Order</string>
+    <string name="activity_title">Acme Terminal</string>
+</resources>

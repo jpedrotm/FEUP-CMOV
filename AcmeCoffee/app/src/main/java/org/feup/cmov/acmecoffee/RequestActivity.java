@@ -146,13 +146,15 @@ public class RequestActivity extends AppCompatActivity {
 
     private byte[] constructMessage() {
         int nr = IDS.size();                                  //
-        ByteBuffer bb = ByteBuffer.allocate(nr+1); // wrap and allocate a byte[] for message and signature
-        int customerId = (Integer) sessionContent.get("id");
+        ByteBuffer bb = ByteBuffer.allocate(nr+3); // wrap and allocate a byte[] for message and signature
+        int customerId = ((Long) sessionContent.get("id")).intValue();
+        System.out.println("ID: " + customerId);
         bb.put((byte) customerId);
         bb.put((byte) nr);
 
-        for (int k=0; k<nr; k++)
+        for (int k=0; k<nr; k++){
             bb.put(IDS.get(k).byteValue());                   // put each type (times nr. of items)
+        }
         byte[] message = bb.array();                           // get the byte[] for signing
 
         if(((RadioButton) findViewById( R.id.freeCoffeeRadio)).isChecked()) {

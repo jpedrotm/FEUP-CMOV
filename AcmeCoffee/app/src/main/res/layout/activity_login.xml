@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:text="@string/login_label"
             android:textAppearance="?android:attr/textAppearanceLarge"
+            android:gravity="center_horizontal"
             android:textStyle="bold"
             android:textColor="@color/colorPrimary"/>
     </TableRow>

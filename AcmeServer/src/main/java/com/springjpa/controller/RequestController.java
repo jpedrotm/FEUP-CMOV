@@ -33,15 +33,8 @@ public class RequestController {
     ItemRepository itemRepository;
 
     @RequestMapping(value = "/save", consumes = "application/json", produces = "application/json")
-    public ResponseEntity process(@RequestBody String request) throws JSONException {
-        /*{
-            "customer_id":"",
-            "items": [
-                        {
-                            "item_id": ""
-                        }
-                    ]
-        }*/
+    public ResponseEntity<String> process(@RequestBody String request) throws JSONException {
+        System.out.println(request);
         JSONObject response = new JSONObject(request);
 
         Customer customer = customerRepository.findOne(response.getLong("customer_id"));
@@ -51,19 +44,20 @@ public class RequestController {
         JSONArray items = response.getJSONArray("items");
         RequestLine rl;
         double finalPrice = 0.0;
-        JSONObject tmpItemJSON;
         Item tmpItem;
         for(int i=0;i<items.length();i++) {
-            tmpItemJSON = items.getJSONObject(i);
-            tmpItem = itemRepository.findOne(tmpItemJSON.getLong("item_id"));
+            tmpItem = itemRepository.findOne(items.getLong(i));
             finalPrice += tmpItem.getPrice();
-            rl = new RequestLine(newRequest, tmpItem, tmpItemJSON.getInt("quantity"));
+            rl = new RequestLine(newRequest, tmpItem, 1);
             requestLineRepository.save(rl);
         }
 
         newRequest.setTotalPrice(finalPrice);
         requestRepository.save(newRequest);
-        return new ResponseEntity(HttpStatus.CREATED);
+        JSONObject result = new JSONObject();
+        result.put("price", finalPrice);
+        result.put("request_id", newRequest.getId());
+        return new ResponseEntity<>(result.toString(), HttpStatus.CREATED);
     }
 
     @RequestMapping("/{id}")
