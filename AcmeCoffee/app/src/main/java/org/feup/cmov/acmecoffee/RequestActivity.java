@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ public class RequestActivity extends AppCompatActivity {
     public  ArrayList<String> NAMES = new ArrayList<>();
     public  ArrayList<Double> PRICES = new ArrayList<>();
     public  ArrayList<String> TYPES = new ArrayList<>();
+    public  ArrayList<Long> IDS = new ArrayList<>();
     public  TextView total;
     public  double totalMoney;
     public static final int STATIC_INT_VALUE = 10;
@@ -34,11 +36,19 @@ public class RequestActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.requestListView);
         listView.setAdapter(cursorAdapter);
 
+        Button btnSend = (Button) findViewById(R.id.sendRequest);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("SENDDDDDDDDDD");
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         double defaultValue = 0;
+        Long defaultId = Long.valueOf(-1);
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode){
             case(STATIC_INT_VALUE) : {
@@ -46,8 +56,9 @@ public class RequestActivity extends AppCompatActivity {
                     String name = data.getStringExtra("newName");
                     double price = data.getDoubleExtra("newPrice",defaultValue);
                     String type = data.getStringExtra("newType");
+                    Long id = data.getLongExtra("id", defaultId);
                     System.out.println("NAME " +name + "PRICE " + price + "TYPE " + type);
-                    addItemToRequest(name,price,type);
+                    addItemToRequest(name, price, type, id);
                 }
                 break;
             }
@@ -113,10 +124,11 @@ public class RequestActivity extends AppCompatActivity {
 
 
 
-    public  void addItemToRequest(String name, double price, String type) {
+    public  void addItemToRequest(String name, double price, String type, Long id) {
         NAMES.add(name);
         PRICES.add(price);
         TYPES.add(type);
+        IDS.add(id);
         updateTotal(price);
         cursorAdapter.notifyDataSetChanged();
 

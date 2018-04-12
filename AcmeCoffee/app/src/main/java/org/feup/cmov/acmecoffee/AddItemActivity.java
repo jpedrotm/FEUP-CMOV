@@ -17,18 +17,14 @@ import java.util.ArrayList;
 public class AddItemActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     ArrayList<String> itemsNames = new ArrayList<>();
-
     ArrayList<Item> items = new ArrayList<>();
     private Spinner itemsSpinner;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
         fillSpinner();
-
     }
 
     public void fillSpinner(){
@@ -58,40 +54,27 @@ public class AddItemActivity extends AppCompatActivity implements AdapterView.On
 
     public void addSelectedItem(View view){
         String name = (itemsSpinner.getSelectedItem().toString());
-        double price = getSelectedItemPrice(name);
-        Item.ItemType type = getSelectedItemType(name);
+        Item item = getSelectedItem(name);
 
-        Intent intent = new Intent();
-        intent.putExtra("newName",name);
-        intent.putExtra("newPrice",price);
-        intent.putExtra("newType",type.name());
-        setResult(RequestActivity.RESULT_OK,intent);
-        finish();
-
+        if(item != null) {
+            Intent intent = new Intent();
+            intent.putExtra("newName",name);
+            intent.putExtra("newPrice",item.getPrice());
+            intent.putExtra("newType",item.getType().name());
+            intent.putExtra("id", item.getId());
+            System.out.println("ID: " + item.getId());
+            setResult(RequestActivity.RESULT_OK,intent);
+            finish();
+        }
     }
 
-    public double getSelectedItemPrice(String name){
-        double price = 0;
+    public Item getSelectedItem(String name) {
         for (int i = 0; i < items.size(); i++){
             if(name == items.get(i).getName()){
-                price = items.get(i).getPrice();
-
+                return items.get(i);
             }
         }
-        return price;
+        return null;
     }
-
-    public Item.ItemType getSelectedItemType(String name){
-        Item.ItemType type = null;
-        for (int i = 0; i < items.size(); i++){
-            if(name == items.get(i).getName()){
-                type = items.get(i).getType();
-
-            }
-
-        }
-        return type;
-    }
-
 
 }
