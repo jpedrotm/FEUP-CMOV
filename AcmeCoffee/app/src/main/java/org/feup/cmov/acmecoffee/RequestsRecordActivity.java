@@ -77,7 +77,7 @@ public class RequestsRecordActivity extends AppCompatActivity {
             TextView textView_id = (TextView)view.findViewById(R.id.requestRecord_id);
             TextView textView_price = (TextView)view.findViewById(R.id.requestRecord_price);
 
-            textView_id.setText("Request id: " + String.valueOf(ids.get(i))+ "€");
+            textView_id.setText("Request id: " + String.valueOf(ids.get(i)));
             textView_price.setText("Price: " + String.valueOf(prices.get(i))+ "€");
             return view;
         }
