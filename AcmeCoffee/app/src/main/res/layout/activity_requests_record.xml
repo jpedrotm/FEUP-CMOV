@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.feup.cmov.acmecoffee.RequestsRecordActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/requests_record"
+        android:textSize="25sp"
+        android:gravity="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginBottom="10dp"/>
+
+    <ListView
+        android:id="@+id/requestsRecordListView"
+        android:layout_width="match_parent"
+        android:layout_height="413dp"
+        android:layout_marginBottom="10dp">
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/requestsRecord_moneySpent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/money_spent"
+        android:gravity="center"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="20sp"
+        />
+</LinearLayout>

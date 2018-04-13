@@ -100,7 +100,7 @@ public class HomepageActivity extends AppCompatActivity
             thr.start();
         }
 
-        else if(id ==  R.id.nav_nif){
+        else if(id == R.id.update_requests){
             GetCustomerRequests getCustomerRequests = new GetCustomerRequests(this, (Long) sessionContent.get("id"));
             Thread thr = new Thread(getCustomerRequests);
             thr.start();
