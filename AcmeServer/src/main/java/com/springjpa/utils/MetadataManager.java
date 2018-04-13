@@ -28,17 +28,17 @@ public class MetadataManager {
         return instance;
     }
 
-    public void addUserCoffee(Long id, int amount) {
-        metadata.addUserCoffee(id, amount);
+    public boolean addUserCoffee(Long id, int amount) {
+        boolean addCoffeeVoucher = metadata.addUserCoffee(id, amount);
         saveMetadata();
+        return addCoffeeVoucher;
     }
 
-    public boolean hasNewFreeCoffeeVoucher(Long id) {
-        return metadata.hasNewFreeCoffeeVoucher(id);
-    }
+    public boolean addUserDiscount(Long id, double price){
 
-    public boolean hasNewDiscountVoucher(Long id) {
-        return metadata.hasNewDiscountVoucher(id);
+        boolean addDiscountVoucher = metadata.addCustomerMoney(id,price);
+        saveMetadata();
+        return addDiscountVoucher;
     }
 
     private void saveMetadata() {

@@ -2,6 +2,7 @@ package com.springjpa.controller;
 
 import com.springjpa.model.*;
 import com.springjpa.repo.*;
+import com.springjpa.utils.Metadata;
 import com.springjpa.utils.MetadataManager;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+
 
 @RestController
 @RequestMapping(value = "/order")
@@ -47,13 +50,23 @@ public class RequestController {
         Item tmpItem;
         for(int i=0;i<items.length();i++) {
             tmpItem = itemRepository.findOne(items.getLong(i));
+            if(tmpItem.getType().name() == "COFFEE" ) {
+                if(MetadataManager.getInstance().addUserCoffee(response.getLong("customer_id"),1)){
+                    voucherRepository.save(new Voucher(Voucher.VoucherType.FREE_COFFEE,customer));
+                }
+
+
+        }
             finalPrice += tmpItem.getPrice();
             rl = new RequestLine(newRequest, tmpItem, 1);
             requestLineRepository.save(rl);
         }
 
-        JSONObject result = new JSONObject();
+        if(MetadataManager.getInstance().addUserDiscount(response.getLong("customer_id"),finalPrice)){
+            voucherRepository.save(new Voucher(Voucher.VoucherType.FIVE_PERCENT_DISCOUNT,customer));
+        }
 
+        JSONObject result = new JSONObject();
         newRequest.setTotalPrice(finalPrice);
         requestRepository.save(newRequest);
 

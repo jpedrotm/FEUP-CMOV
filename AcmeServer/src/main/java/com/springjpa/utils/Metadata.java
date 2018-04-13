@@ -12,12 +12,14 @@ public class Metadata implements Serializable {
         customerMoney = new HashMap<>();
     }
 
-    public void addUserCoffee(Long id, int amount) {
+    public boolean addUserCoffee(Long id, int amount) {
         if(customerCoffees.containsKey(id)) {
             customerCoffees.put(id, customerCoffees.get(id) + amount);
         } else {
             customerCoffees.put(id, amount);
         }
+
+        return hasNewFreeCoffeeVoucher(id);
     }
 
     public boolean hasNewFreeCoffeeVoucher(Long id) {
@@ -25,16 +27,23 @@ public class Metadata implements Serializable {
             customerCoffees.put(id, 0);
             return true;
         } else {
+
             return false;
         }
     }
 
-    public void addCustomerMoney(Long id, double money) {
+    public boolean addCustomerMoney(Long id, double money) {
+
         if(customerMoney.containsKey(id)) {
             customerMoney.put(id, customerMoney.get(id) + money);
+
         } else {
             customerMoney.put(id, money);
         }
+
+
+
+        return hasNewDiscountVoucher(id);
     }
 
     public boolean hasNewDiscountVoucher(Long id) {
@@ -48,6 +57,10 @@ public class Metadata implements Serializable {
 
     public int getUserCoffees(Long id) {
         return customerCoffees.get(id);
+    }
+
+    public HashMap<Long, Double> getCustomerMoney() {
+        return customerMoney;
     }
 
     @Override

@@ -46,6 +46,10 @@ public class Item implements Serializable{
         return price;
     }
 
+    public ItemType getType() {
+        return type;
+    }
+
     public static ItemType getItemTypeByString(String type) {
         switch(type) {
             case "DRINKS":
