@@ -67,9 +67,9 @@ public class RequestActivity extends AppCompatActivity {
     RadioButton fiveDiscount;
     RadioButton noVoucher;
 
-    public int voucherToUse;
-    public ArrayList<Integer> coffeeVouchers = new ArrayList<>();
-    public ArrayList<Integer> discountVouhcers = new ArrayList<>();
+    public Long voucherToUse;
+    public ArrayList<Long> coffeeVouchers = new ArrayList<>();
+    public ArrayList<Long> discountVouhcers = new ArrayList<>();
 
     private SharedPreferences prefs;
     Map<String, ?> sessionContent;
@@ -110,14 +110,16 @@ public class RequestActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId == R.id.freeCoffeeRadio){
                     voucherToUse = getMinValue(coffeeVouchers);
+                    System.out.println(voucherToUse);
                     updateTotal(0,0);
                 }
                 if (checkedId == R.id.fiveDiscountRadio){
                     voucherToUse = getMinValue(discountVouhcers);
+                    System.out.println(voucherToUse);
                     updateTotal(0,1);
                 }
                 if ( checkedId == R.id.noVoucherRadio){
-                    voucherToUse = 0; //POMOS ZERO AQUI????
+
                     updateTotal(0,0);
                 }
             }
@@ -129,19 +131,19 @@ public class RequestActivity extends AppCompatActivity {
 
         for(int i = 0; i < vouchers.size(); i++){
             if(vouchers.get(i).getStringFromType(vouchers.get(i).getType()).equals("FREE_COFFEE")){
-                coffeeVouchers.add(i);
+                coffeeVouchers.add(vouchers.get(i).getId());
                 freeCoffee.setClickable(true);
             }
             else  if(vouchers.get(i).getStringFromType(vouchers.get(i).getType()).equals("FIVE_PERCENT_DISCOUNT")){
-                discountVouhcers.add(i);
+                discountVouhcers.add(vouchers.get(i).getId());
                 fiveDiscount.setClickable(true);
             }
         }
 
     }
 
-    public static int getMinValue(ArrayList<Integer> array) {
-        int minValue = array.get(0);
+    public static Long getMinValue(ArrayList<Long> array) {
+        Long minValue = array.get(0);
         for (int i = 1; i < array.size(); i++) {
             if (array.get(i) < minValue) {
                 minValue = array.get(i);
@@ -187,10 +189,10 @@ public class RequestActivity extends AppCompatActivity {
 
         if(voucherToUse != 0){
             bb.put((byte) 1);
-            bb.put((byte) voucherToUse);
+            bb.put((byte) voucherToUse.intValue());
         }
         else{
-            bb.put((byte) voucherToUse);
+            bb.put((byte) 0);
         }
 
         byte[] message = bb.array();                           // get the byte[] for signing
