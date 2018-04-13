@@ -82,6 +82,20 @@ public class Customer implements Serializable {
         return exp;
     }
 
+    public Set<Request> getRequests() {
+	    return requests;
+    }
+
+    public String getRequestsJSON() throws JSONException{
+        JSONArray array = new JSONArray();
+
+        for(Request r: requests) {
+            array.put(r.toString());
+        }
+
+        return array.toString();
+    }
+
     public String getVouchersJSON() throws JSONException {
         JSONArray array = new JSONArray();
 

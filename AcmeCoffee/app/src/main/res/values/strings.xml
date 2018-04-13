@@ -28,6 +28,7 @@
     <string name="update_voucher">Update Voucher</string>
     <string name="update_menu">Update Menu</string>
     <string name="logout">Logout</string>
+    <string name="update_requests">Update Requests</string>
 
     <!-- Relativo aos vouchers -->
     <string name="voucher_types">Voucher types</string>
@@ -49,4 +50,15 @@
     <string name="no_voucher">No voucher</string>
     <string name="select_item">Choose item</string>
     <string name="back_to_home_page">Back to the home page</string>
+
+    <!-- Relativo ao histórico -->
+    <string name="requests_record">Requests Record</string>
+    <string name="money_spent">Total money spent: </string>
+
+
+    <!-- Relativo à pagina principal -->
+    <string name="make_request">Make a Request</string>
+    <string name="menu">Menu</string>
+    <string name="vouchers">Vouchers</string>
+    <string name="request_record">Requests Record</string>
 </resources>

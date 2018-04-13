@@ -2,10 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.feup.cmov.acmecoffee">
 
-    <uses-feature android:name="android.hardware.nfc" android:required="true"/>
-    <uses-permission android:name="android.permission.NFC" />
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -32,6 +34,7 @@
         <activity android:name=".RequestActivity" />
         <activity android:name=".AddItemActivity" />
         <activity android:name=".QRActivity" />
+        <activity android:name=".RequestsRecordActivity"></activity>
     </application>
 
 </manifest>

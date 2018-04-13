@@ -86,11 +86,18 @@ public class HomepageActivity extends AppCompatActivity
             startActivity(intent);
         } else if(id == R.id.update_user_vouchers) {
             GetCustomerVouchers getCustomerVouchers = new GetCustomerVouchers(this, (Long) sessionContent.get("id"));
+
             Thread thr = new Thread(getCustomerVouchers);
             thr.start();
         } else if(id == R.id.update_menu) {
             GetItems getItems = new GetItems(this);
             Thread thr = new Thread(getItems);
+            thr.start();
+        }
+
+        else if(id == R.id.update_requests){
+            GetCustomerRequests getCustomerRequests = new GetCustomerRequests(this, (Long) sessionContent.get("id"));
+            Thread thr = new Thread(getCustomerRequests);
             thr.start();
         }
 
@@ -110,6 +117,11 @@ public class HomepageActivity extends AppCompatActivity
 
     public void goToRequest(View view){
         Intent intent = new Intent(getApplicationContext(), RequestActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToRequestsRecord(View view){
+        Intent intent = new Intent(getApplicationContext(), RequestsRecordActivity.class);
         startActivity(intent);
     }
 
@@ -179,6 +191,38 @@ public class HomepageActivity extends AppCompatActivity
                     public void run()
                     {
                         Toast.makeText(context, Constants.VOUCHERS_LOAD_ERROR, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+    }
+
+    private class GetCustomerRequests implements Runnable {
+        Context context = null;
+        Long id;
+
+        GetCustomerRequests(Context context, Long id) {
+            this.context = context;
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+            String response = HttpHandler.getCustomerRequests(id);
+
+            if(response != null) {
+                DatabaseHelper.getInstance(context).updateRequestsTable(response);
+                runOnUiThread(new Runnable() {
+                    public void run()
+                    {
+                        Toast.makeText(context, Constants.REQUEST_LOAD_SUCCESS, Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                runOnUiThread(new Runnable() {
+                    public void run()
+                    {
+                        Toast.makeText(context, Constants.REQUEST_LOAD_ERROR, Toast.LENGTH_LONG).show();
                     }
                 });
             }

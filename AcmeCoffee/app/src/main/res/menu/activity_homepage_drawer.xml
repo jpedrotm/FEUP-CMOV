@@ -27,6 +27,10 @@
             android:icon="@drawable/ic_restaurant_menu_24dp"
             android:title="@string/update_menu" />
         <item
+            android:id="@+id/update_requests"
+            android:icon="@drawable/ic_update_requests"
+            android:title="@string/update_requests" />
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_logout"
             android:title="@string/logout" />

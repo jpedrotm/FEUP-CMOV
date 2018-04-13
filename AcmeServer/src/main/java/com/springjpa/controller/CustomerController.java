@@ -92,5 +92,17 @@ public class CustomerController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @RequestMapping("/requests/{id}")
+    public ResponseEntity<String> getCustomerRequests(@PathVariable("id") Long id) throws JSONException {
+        Customer result = repository.findOne(id);
+
+        if(result != null) {
+            return new ResponseEntity<>(result.getRequestsJSON(), HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
 
