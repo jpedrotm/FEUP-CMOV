@@ -46,6 +46,7 @@ public class RequestController {
         for(byte b: request) {
             System.out.println("BYTE: " + b);
         }
+
         String message = constructMessage(request);
 
         if(message != null) {
