@@ -53,4 +53,11 @@
     <!-- Relativo ao histórico -->
     <string name="requests_record">Requests Record</string>
     <string name="money_spent">Total money spent: </string>
+
+
+    <!-- Relativo à pagina principal -->
+    <string name="make_request">Make a Request</string>
+    <string name="menu">Menu</string>
+    <string name="vouchers">Vouchers</string>
+    <string name="request_record">Requests Record</string>
 </resources>

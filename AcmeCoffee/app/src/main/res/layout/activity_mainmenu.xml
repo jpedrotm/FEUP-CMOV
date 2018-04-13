@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Fazer Pedido"
+                    android:text="@string/make_request"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold" />
 
@@ -91,7 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Editar Perfil"
+                    android:text="@string/request_record"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold" />
 
@@ -137,7 +137,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Ver Menu"
+                    android:text="@string/menu"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold" />
 
@@ -171,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Vouchers"
+                    android:text="@string/vouchers"
                     android:textColor="@color/colorPrimary"
                     android:textStyle="bold" />
 
