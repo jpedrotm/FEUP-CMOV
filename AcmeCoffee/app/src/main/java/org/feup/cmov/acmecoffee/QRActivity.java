@@ -1,8 +1,11 @@
 package org.feup.cmov.acmecoffee;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,20 +19,26 @@ import java.io.UnsupportedEncodingException;
 public class QRActivity extends AppCompatActivity {
     ImageView qrCodeImageview;
     TextView errorTv;
-    byte [] bContent = {83, 111, 109, 101, 58, 32, -40, -41, -9, -90};  // this is the msg which we will encode in QRcode
+    byte [] bContent;
     String content = null;
     String errorMsg = "";
-    public final static int WIDTH=600;
+    public final static int WIDTH=700;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        TextView titleTv;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
         qrCodeImageview=(ImageView) findViewById(R.id.img_qr_code_image);
-        titleTv = (TextView) findViewById(R.id.title);
-        errorTv = (TextView) findViewById(R.id.error);
+
+        Button btnBackToHomePage = (Button) findViewById(R.id.back_to_home_page);
+        btnBackToHomePage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
 
         bContent = getIntent().getByteArrayExtra("data");
 
@@ -46,7 +55,6 @@ public class QRActivity extends AppCompatActivity {
             errorMsg = e.getMessage();
             errorTv.setText(errorMsg);
         }
-        titleTv.setText("Message: \"" + content + "\"");
 
         Thread t = new Thread(new Runnable() {  // do the creation in a new thread to avoid ANR Exception
             public void run() {

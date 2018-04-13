@@ -48,4 +48,5 @@
     <string name="five_discount">5% Discount</string>
     <string name="no_voucher">No voucher</string>
     <string name="select_item">Choose item</string>
+    <string name="back_to_home_page">Back to the home page</string>
 </resources>

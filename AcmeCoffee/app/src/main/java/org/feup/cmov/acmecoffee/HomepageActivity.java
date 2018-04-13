@@ -1,11 +1,8 @@
 package org.feup.cmov.acmecoffee;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -22,7 +19,7 @@ import android.widget.Toast;
 import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.SessionManager;
-import org.feup.cmov.acmecoffee.Utils.ToastManager;
+import org.feup.cmov.acmecoffee.Utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -136,14 +133,14 @@ public class HomepageActivity extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         public void run()
                         {
-                            Toast.makeText(context, ToastManager.ITEMS_LOAD_SUCCESS, Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, Constants.ITEMS_LOAD_SUCCESS, Toast.LENGTH_LONG).show();
                         }
                     });
                 } catch (JSONException e) {
                     runOnUiThread(new Runnable() {
                         public void run()
                         {
-                            Toast.makeText(context, ToastManager.ITEMS_LOAD_ERROR, Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, Constants.ITEMS_LOAD_ERROR, Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -151,7 +148,7 @@ public class HomepageActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     public void run()
                     {
-                        Toast.makeText(context, ToastManager.ITEMS_LOAD_ERROR, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, Constants.ITEMS_LOAD_ERROR, Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -176,14 +173,14 @@ public class HomepageActivity extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     public void run()
                     {
-                        Toast.makeText(context, ToastManager.VOUCHERS_LOAD_SUCCESS, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, Constants.VOUCHERS_LOAD_SUCCESS, Toast.LENGTH_LONG).show();
                     }
                 });
             } else {
                 runOnUiThread(new Runnable() {
                     public void run()
                     {
-                        Toast.makeText(context, ToastManager.VOUCHERS_LOAD_ERROR, Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, Constants.VOUCHERS_LOAD_ERROR, Toast.LENGTH_LONG).show();
                     }
                 });
             }

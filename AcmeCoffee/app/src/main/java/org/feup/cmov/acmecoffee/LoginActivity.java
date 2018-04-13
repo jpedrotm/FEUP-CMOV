@@ -15,7 +15,7 @@ import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.JSONCreater;
 import org.feup.cmov.acmecoffee.Utils.SessionManager;
-import org.feup.cmov.acmecoffee.Utils.ToastManager;
+import org.feup.cmov.acmecoffee.Utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(),HomepageActivity.class);
                     startActivity(intent);
                 } else {
-                    toastMessage(ToastManager.WRONG_FIELDS_LOGIN);
+                    toastMessage(Constants.WRONG_FIELDS_LOGIN);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -11,11 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.feup.cmov.acmecoffee.Utils.BCrypt;
 import org.feup.cmov.acmecoffee.Utils.HttpHandler;
 import org.feup.cmov.acmecoffee.Utils.JSONCreater;
 import org.feup.cmov.acmecoffee.Utils.SessionManager;
-import org.feup.cmov.acmecoffee.Utils.ToastManager;
+import org.feup.cmov.acmecoffee.Utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,11 +65,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     private boolean checkFields(String email, String name, String password, String passwordConfirmation, String nif) {
        if(!validatePassword(password, passwordConfirmation)) {
-           toastMessage(ToastManager.WRONG_PASSWORDS);
+           toastMessage(Constants.WRONG_PASSWORDS);
            return false;
        }
        else if(!validateNif(nif)) {
-            toastMessage(ToastManager.WRONG_NIF);
+            toastMessage(Constants.WRONG_NIF);
             return false;
         }
 
@@ -104,7 +103,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), HomepageActivity.class);
                     startActivity(intent);
                 } else {
-                    toastMessage(ToastManager.WRONG_REGISTER);
+                    toastMessage(Constants.WRONG_REGISTER);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -23,15 +23,23 @@ import android.widget.Toast;
 import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Model.Voucher;
 
+import org.feup.cmov.acmecoffee.Utils.Constants;
 import org.json.JSONArray;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
+import java.security.SignatureException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -81,6 +89,7 @@ public class RequestActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 byte[] message = constructMessage();
+                System.out.println("SIZE: " + message.length);
                 Intent intent = new Intent(getApplicationContext(), QRActivity.class);
                 intent.putExtra("data", message);
                 startActivity(intent);
@@ -106,7 +115,9 @@ public class RequestActivity extends AppCompatActivity {
             }
         });
 
+        generateAndStoreKeys();
     }
+
     public void checkAvailableVouchers(){
         vouchers = DatabaseHelper.getInstance(this).getVouchers();
 
@@ -120,8 +131,6 @@ public class RequestActivity extends AppCompatActivity {
         }
 
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -146,18 +155,18 @@ public class RequestActivity extends AppCompatActivity {
 
     private byte[] constructMessage() {
         int nr = IDS.size();                                  //
-        ByteBuffer bb = ByteBuffer.allocate(nr+3); // wrap and allocate a byte[] for message and signature
+        ByteBuffer bb = ByteBuffer.allocate((nr + 3)); // wrap and allocate a byte[] for message and signature
         int customerId = ((Long) sessionContent.get("id")).intValue();
-        System.out.println("ID: " + customerId);
         bb.put((byte) customerId);
         bb.put((byte) nr);
 
         for (int k=0; k<nr; k++){
             bb.put(IDS.get(k).byteValue());                   // put each type (times nr. of items)
         }
-        byte[] message = bb.array();                           // get the byte[] for signing
 
-        if(((RadioButton) findViewById( R.id.freeCoffeeRadio)).isChecked()) {
+        //VOUCHERS AQUI
+
+        /* if(((RadioButton) findViewById( R.id.freeCoffeeRadio)).isChecked()) {
             bb.put((byte) 1); //flag a dizer que um voucher foi escolhido
             bb.put((byte) 1); // id do voucher
         } else if(((RadioButton) findViewById( R.id.fiveDiscountRadio)).isChecked()) {
@@ -165,42 +174,43 @@ public class RequestActivity extends AppCompatActivity {
             bb.put((byte) 2); // id do voucher
         } else {
             bb.put((byte) 0);
-        }
+        } */
 
-        /* try {
-            KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+        bb.put((byte) 0);
+
+        byte[] message = bb.array();                           // get the byte[] for signing
+
+        /* KeyStore ks = null;
+        try {
+            ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
             ks.load(null);
-            KeyStore.Entry entry = ks.getEntry("myIdKey", null);          // get key entry from the keystore
+            KeyStore.Entry entry = ks.getEntry(Constants.keyname, null);          // get key entry from the keystore
             PrivateKey pri = ((KeyStore.PrivateKeyEntry)entry).getPrivateKey();   // get the private key
             Signature sg = Signature.getInstance("SHA1WithRSA");                  // build a signing object
             sg.initSign(pri);                                                     // define the signature key
-            System.out.println("ASSINATURA");
-            sg.update(message, 0, nr+1);                                          // define the message bytes to be signed
-            sg.sign(message, nr+1, 512/8);                         // sign and append the signature to the message bytes
-        }
-        catch (Exception ex) {
-            Log.d("", ex.getMessage());
-        }
-
-        System.out.println("TAMANHO: " + message.length); */
+            sg.update(message, 0, nr + 3);                                          // define the message bytes to be signed
+            sg.sign(message, nr + 3, Constants.KEY_SIZE/8);                         // sign and append the signature to the message bytes
+        } catch (Exception e) {
+            e.printStackTrace();
+        } */
 
         return message;
     }
 
     private void generateAndStoreKeys(){
         try {
-            KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+            KeyStore ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
             ks.load(null);
-            KeyStore.Entry entry = ks.getEntry("myIdKey", null);         // verify if the keystore has already the keys
+            KeyStore.Entry entry = ks.getEntry(Constants.keyname, null);         // verify if the keystore has already the keys
             if (entry == null) {
                 Calendar start = new GregorianCalendar();
                 Calendar end = new GregorianCalendar();
                 end.add(Calendar.YEAR, 20);                                       // start and end validity
-                KeyPairGenerator kgen = KeyPairGenerator.getInstance("RSA", "AndroidKeyStore");    // keys for RSA algorithm
+                KeyPairGenerator kgen = KeyPairGenerator.getInstance("RSA", Constants.ANDROID_KEYSTORE);    // keys for RSA algorithm
                 @SuppressLint({"NewApi", "LocalSuppress"}) AlgorithmParameterSpec spec = new KeyPairGeneratorSpec.Builder(this)      // specification for key generation
-                        .setKeySize(512)                                       // key size in bits
-                        .setAlias("myIdKey")                                          // name of the entry in keystore
-                        .setSubject(new X500Principal("CN=" + "myIdKey"))             // identity of the certificate holding the public key (mandatory)
+                        .setKeySize(Constants.KEY_SIZE)                                       // key size in bits
+                        .setAlias(Constants.keyname)                                          // name of the entry in keystore
+                        .setSubject(new X500Principal("CN=" + Constants.keyname))             // identity of the certificate holding the public key (mandatory)
                         .setSerialNumber(BigInteger.valueOf(12121212))                        // certificate serial number (mandatory)
                         .setStartDate(start.getTime())
                         .setEndDate(end.getTime())
@@ -210,7 +220,7 @@ public class RequestActivity extends AppCompatActivity {
             }
         }
         catch (Exception ex) {
-            Log.d("", ex.getMessage());
+            Log.d("ERROR GENERATING KEY: ", ex.getMessage());
         }
     }
 
@@ -267,7 +277,7 @@ public class RequestActivity extends AppCompatActivity {
 
     public void goToAddItem(View view){
         Intent intent = new Intent(getApplicationContext(), AddItemActivity.class);
-        startActivityForResult(intent,STATIC_INT_VALUE );
+        startActivityForResult(intent,STATIC_INT_VALUE);
     }
 
     public  void addItemToRequest(String name, double price, String type, int id) {

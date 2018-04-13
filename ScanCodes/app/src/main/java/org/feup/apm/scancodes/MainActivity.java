@@ -1,5 +1,6 @@
 package org.feup.apm.scancodes;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -8,23 +9,33 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.security.KeyPairGeneratorSpec;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.feup.apm.scancodes.Utils.Constants;
 import org.feup.apm.scancodes.Utils.HttpHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import javax.security.auth.x500.X500Principal;
 
 public class MainActivity extends Activity {
   static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
@@ -42,6 +53,8 @@ public class MainActivity extends Activity {
         scan(true);
       }
     });
+
+    generateAndStoreKeys();
   }
 
   @Override
@@ -86,6 +99,7 @@ public class MainActivity extends Activity {
         String contents = data.getStringExtra("SCAN_RESULT");
         try {
           byte[] array = contents.getBytes("ISO-8859-1");
+          System.out.println("ARRAY SIZE: " + array.length);
           contructMessage(array);
         } catch (UnsupportedEncodingException e) {
           e.printStackTrace();
@@ -98,7 +112,7 @@ public class MainActivity extends Activity {
 
   private void contructMessage(byte[] array) throws JSONException {
 
-    int sign_size = 512/8;
+    int sign_size = Constants.KEY_SIZE/8;
     int mess_size = array.length - sign_size;
 
     ByteBuffer buffer = ByteBuffer.wrap(array);
@@ -106,8 +120,8 @@ public class MainActivity extends Activity {
     byte[] sign = new byte[sign_size];
     buffer.get(mess, 0, mess_size);             // extract the message containing nr. of types + type1 + type2 + ... (nr times)
     buffer.get(sign, 0, sign_size);             // extract the signature
-
     boolean verified = validate(mess, sign);*/
+
     JSONObject response = new JSONObject();
     JSONArray items = new JSONArray();
 
@@ -140,12 +154,12 @@ public class MainActivity extends Activity {
 
   }
 
-  /*boolean validate(byte[] message, byte[] signature) {
+  boolean validate(byte[] message, byte[] signature) {
     boolean verified = false;
     try {
-      KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+      KeyStore ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
       ks.load(null);
-      KeyStore.Entry entry = ks.getEntry("myIdKey", null);
+      KeyStore.Entry entry = ks.getEntry(Constants.keyname, null);
       PublicKey pub = ((KeyStore.PrivateKeyEntry)entry).getCertificate().getPublicKey();   // the public key is stored as a certificate private key
       Signature sg = Signature.getInstance("SHA1WithRSA");                                 // associated with the private key
       sg.initVerify(pub);
@@ -153,10 +167,37 @@ public class MainActivity extends Activity {
       verified = sg.verify(signature);
     }
     catch (Exception ex) {
-      Log.d("", ex.getMessage());
+      Log.d("ERROR VALIDATING: ", ex.getMessage());
     }
     return verified;
-  }*/
+  }
+
+  private void generateAndStoreKeys(){
+    try {
+      KeyStore ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
+      ks.load(null);
+      KeyStore.Entry entry = ks.getEntry(Constants.keyname, null);         // verify if the keystore has already the keys
+      if (entry == null) {
+        Calendar start = new GregorianCalendar();
+        Calendar end = new GregorianCalendar();
+        end.add(Calendar.YEAR, 20);                                       // start and end validity
+        KeyPairGenerator kgen = KeyPairGenerator.getInstance("RSA", Constants.ANDROID_KEYSTORE);    // keys for RSA algorithm
+        @SuppressLint({"NewApi", "LocalSuppress"}) AlgorithmParameterSpec spec = new KeyPairGeneratorSpec.Builder(this)      // specification for key generation
+                .setKeySize(Constants.KEY_SIZE)                                       // key size in bits
+                .setAlias(Constants.keyname)                                          // name of the entry in keystore
+                .setSubject(new X500Principal("CN=" + Constants.keyname))             // identity of the certificate holding the public key (mandatory)
+                .setSerialNumber(BigInteger.valueOf(12121212))                        // certificate serial number (mandatory)
+                .setStartDate(start.getTime())
+                .setEndDate(end.getTime())
+                .build();
+        kgen.initialize(spec);
+        KeyPair kp = kgen.generateKeyPair();                                      // the keypair is automatically stored in the app keystore
+      }
+    }
+    catch (Exception ex) {
+      Log.d("ERROR GENERATING KEY: ", ex.getMessage());
+    }
+  }
 
   private class CustomerRequest implements Runnable {
     Context context = null;
@@ -172,8 +213,8 @@ public class MainActivity extends Activity {
       String response = HttpHandler.customerRequest(info);
       System.out.println("RESPONSE: " + response);
       try {
-        final JSONObject info = new JSONObject(response);
         if(response != null) {
+          final JSONObject info = new JSONObject(response);
           runOnUiThread(new Runnable() {
             public void run()
             {
