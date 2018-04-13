@@ -50,12 +50,10 @@ public class RequestController {
         Item tmpItem;
         for(int i=0;i<items.length();i++) {
             tmpItem = itemRepository.findOne(items.getLong(i));
-            if(tmpItem.getType().name() == "COFFEE" ) {
+            if(tmpItem.getType().name().equals("COFFEE")) {
                 if(MetadataManager.getInstance().addUserCoffee(response.getLong("customer_id"),1)){
                     voucherRepository.save(new Voucher(Voucher.VoucherType.FREE_COFFEE,customer));
                 }
-
-
         }
             finalPrice += tmpItem.getPrice();
             rl = new RequestLine(newRequest, tmpItem, 1);
@@ -78,6 +76,7 @@ public class RequestController {
             } else {
                 finalPrice = Math.round((finalPrice *0.95) * 100) / 100;
             }
+            voucherRepository.delete(voucher_id);
         }
 
         result.put("price", finalPrice);
