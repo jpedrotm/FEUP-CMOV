@@ -133,14 +133,17 @@ public class MainActivity extends Activity {
     public void run() {
       try {
           String response = HttpHandler.customerRequest(info);
-          System.out.println("RESPONSE: " + response);
         if(response != null) {
           final JSONObject info = new JSONObject(response);
           runOnUiThread(new Runnable() {
             public void run()
             {
               try {
-                message.setText("Price: " + info.getDouble("price") + "\nRequest ID: " + info.getLong("request_id"));
+                  String messageText = "Price: " + info.getDouble("price") + "€\nRequest ID: " + info.getLong("request_id");
+                if(info.getBoolean("voucher_free_coffee")){
+                    messageText += "\nHas a free coffee to receive.";
+                }
+                message.setText(messageText);
               } catch (JSONException e) {
                 e.printStackTrace();
               }
