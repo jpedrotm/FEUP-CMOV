@@ -70,6 +70,7 @@
             android:layout_height="190dp"
             android:layout_margin="10dp"
             android:clickable="true"
+            android:onClick="goToRequestsRecord"
             android:foreground="?android:attr/selectableItemBackground">
 
             <LinearLayout

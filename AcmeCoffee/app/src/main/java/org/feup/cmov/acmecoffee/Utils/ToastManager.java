@@ -11,4 +11,6 @@ public class ToastManager {
     public static String ITEMS_LOAD_SUCCESS = "Menu was loaded.";
     public static String ITEMS_LOAD_ERROR = "Couldn't load the menu.";
     public static String COULDNT_GET_ITEMS = "Something went wrong to get items menu.";
+    public static String REQUEST_LOAD_SUCCESS = "Requests were loaded.";
+    public static String REQUEST_LOAD_ERROR = "Couldn't load the requests.";
 }

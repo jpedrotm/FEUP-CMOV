@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import org.feup.cmov.acmecoffee.Model.Item;
+import org.feup.cmov.acmecoffee.Model.Request;
 import org.feup.cmov.acmecoffee.Model.Voucher;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private ArrayList<Item> items = new ArrayList<>();
     private ArrayList<Voucher> vouchers = new ArrayList<>();
+    private ArrayList<Request> requests = new ArrayList<>();
 
     private static DatabaseHelper instance = null;
 
@@ -37,12 +39,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE Items(_id INTEGER PRIMARY KEY AUTOINCREMENT,item_id INTEGER, name TEXT, price REAL, type TEXT);");
         db.execSQL("CREATE TABLE Vouchers(_id INTEGER PRIMARY KEY AUTOINCREMENT,voucher_id INTEGER, type TEXT);");
+        db.execSQL("CREATE TABLE Requests(_id INTEGER PRIMARY KEY AUTOINCREMENT,request_id INTEGER, totalPrice REAL);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE IF EXISTS Items");
         db.execSQL("DROP TABLE IF EXISTS Vouchers");
+        db.execSQL("DROP TABLE IF EXISTS Requests");
         onCreate(db);
     }
 
@@ -121,6 +125,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         vouchers = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DROP TABLE IF EXISTS Vouchers");
+    }
+
+    public void deleteRequests() {
+        requests = new ArrayList<>();
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DROP TABLE IF EXISTS Requests");
+    }
+
+    public void updateRequestsTable(String requests) {
+        deleteRequests();
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("CREATE TABLE Requests(_id INTEGER PRIMARY KEY AUTOINCREMENT,request_id INTEGER, totalPrice REAL);");
+
+        try {
+            JSONArray requestsArray = new JSONArray(requests);
+
+            ContentValues values = new ContentValues();
+            JSONObject request;
+            for(int i = 0;i < requestsArray.length(); i++) {
+                request = new JSONObject(requestsArray.getString(i));
+                values.put("request_id", request.getString("id"));
+                values.put("totalPrice", request.getDouble("total_price"));
+                db.insert("Requests", null, values);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<Request> getRequests() {
+        if(requests.size() != 0) {
+            return requests;
+        }
+
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT request_id, totalPrice FROM requests", null);
+
+        while(cursor.moveToNext()) {
+            requests.add(new Request(cursor.getLong(0),cursor.getDouble(1)));
+            System.out.println("AQUI VAI REQUEST: " + cursor.getLong(0) + " ; " +cursor.getDouble(1));
+        }
+
+        return requests;
     }
 
 }

@@ -15,7 +15,7 @@ public class HttpHandler {
     private static URL url;
     private static HttpURLConnection urlConnection = null;
 
-    private static final String DOMAIN = "0cd87d4a.ngrok.io";
+    private static final String DOMAIN = "5c806dcb.ngrok.io";
 
     private static String readStream(InputStream in) {
         BufferedReader reader = null;
@@ -156,6 +156,36 @@ public class HttpHandler {
 
         try {
             url = new URL("http://" + DOMAIN + "/customer/vouchers/" + id);
+            System.out.println(url.toString());
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setUseCaches(false);
+
+            // get response
+            int responseCode = urlConnection.getResponseCode();
+
+            if(responseCode == HttpURLConnection.HTTP_OK) {
+                response = readStream(urlConnection.getInputStream());
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        finally {
+            if(urlConnection != null)
+                urlConnection.disconnect();
+        }
+
+        return response;
+    }
+
+    public static String getCustomerRequests(Long id) {
+        String response = null;
+
+        try {
+            url = new URL("http://" + DOMAIN + "/customer/requests/" + id);
             System.out.println(url.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoInput(true);
