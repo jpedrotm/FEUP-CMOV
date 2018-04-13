@@ -185,7 +185,7 @@ public class RequestActivity extends AppCompatActivity {
 
         //VOUCHERS AQUI
 
-        /* if(((RadioButton) findViewById( R.id.freeCoffeeRadio)).isChecked()) {
+
         if(voucherToUse != 0){
             bb.put((byte) 1);
             bb.put((byte) voucherToUse);
@@ -195,7 +195,7 @@ public class RequestActivity extends AppCompatActivity {
         }
 
 
-        
+
 
        /* if(((RadioButton) findViewById( R.id.freeCoffeeRadio)).isChecked()) {
             bb.put((byte) 1); //flag a dizer que um voucher foi escolhido
@@ -207,7 +207,7 @@ public class RequestActivity extends AppCompatActivity {
             bb.put((byte) 0);
         } */
 
-        bb.put((byte) 0);
+       
 
         byte[] message = bb.array();                           // get the byte[] for signing
 
