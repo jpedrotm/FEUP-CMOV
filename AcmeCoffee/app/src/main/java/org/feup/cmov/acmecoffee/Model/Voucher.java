@@ -63,4 +63,8 @@ public class Voucher {
     public enum VoucherType {
         FREE_COFFEE, FIVE_PERCENT_DISCOUNT
     }
+
+    public Long getId() {
+        return id;
+    }
 }
