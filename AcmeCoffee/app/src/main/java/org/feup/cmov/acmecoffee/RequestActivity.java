@@ -95,7 +95,6 @@ public class RequestActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 byte[] message = constructMessage();
-                System.out.println("SIZE: " + message.length);
                 Intent intent = new Intent(getApplicationContext(), QRActivity.class);
                 intent.putExtra("data", message);
                 startActivity(intent);
@@ -163,7 +162,6 @@ public class RequestActivity extends AppCompatActivity {
                     double price = data.getDoubleExtra("newPrice",defaultValue);
                     String type = data.getStringExtra("newType");
                     int id = data.getIntExtra("id", defaultId);
-                    System.out.println("NAME " +name + "PRICE " + price + "TYPE " + type);
                     addItemToRequest(name, price, type, id);
                 }
                 break;
@@ -173,8 +171,15 @@ public class RequestActivity extends AppCompatActivity {
     }
 
     private byte[] constructMessage() {
+        int extraBytes;
+        if(voucherToUse != null) {
+            extraBytes = 4;
+        } else {
+            extraBytes = 3;
+        }
+
         int nr = IDS.size();                                  //
-        ByteBuffer bb = ByteBuffer.allocate((nr + 3) + Constants.KEY_SIZE/8); // wrap and allocate a byte[] for message and signature
+        ByteBuffer bb = ByteBuffer.allocate((nr + extraBytes) + Constants.KEY_SIZE/8); // wrap and allocate a byte[] for message and signature
         int customerId = ((Long) sessionContent.get("id")).intValue();
         bb.put((byte) customerId);
         bb.put((byte) nr);
@@ -201,8 +206,8 @@ public class RequestActivity extends AppCompatActivity {
             PrivateKey pri = ((KeyStore.PrivateKeyEntry)entry).getPrivateKey();   // get the private key
             Signature sg = Signature.getInstance("SHA1WithRSA");                  // build a signing object
             sg.initSign(pri);                                                     // define the signature key
-            sg.update(message, 0, nr + 3);                                          // define the message bytes to be signed
-            sg.sign(message, nr + 3, Constants.KEY_SIZE/8);                         // sign and append the signature to the message bytes
+            sg.update(message, 0, nr + extraBytes);                                // define the message bytes to be signed
+            sg.sign(message, nr + extraBytes, Constants.KEY_SIZE/8);             // sign and append the signature to the message bytes
         } catch (Exception e) {
             e.printStackTrace();
         }

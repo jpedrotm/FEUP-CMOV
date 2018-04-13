@@ -150,6 +150,8 @@ public class RequestController {
             voucherId = buffer.get(nrItems + 3);
         }
 
+        response.put("voucher_id", voucherId);
+
         return response.toString();
     }
 
