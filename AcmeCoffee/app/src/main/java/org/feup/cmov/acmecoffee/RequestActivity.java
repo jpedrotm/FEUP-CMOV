@@ -119,7 +119,6 @@ public class RequestActivity extends AppCompatActivity {
                     updateTotal(0,1);
                 }
                 if ( checkedId == R.id.noVoucherRadio){
-
                     updateTotal(0,0);
                 }
             }
@@ -184,10 +183,7 @@ public class RequestActivity extends AppCompatActivity {
             bb.put(IDS.get(k).byteValue());                   // put each type (times nr. of items)
         }
 
-        //VOUCHERS AQUI
-
-
-        if(voucherToUse != 0){
+        if(voucherToUse != null){
             bb.put((byte) 1);
             bb.put((byte) voucherToUse.intValue());
         }
@@ -197,13 +193,11 @@ public class RequestActivity extends AppCompatActivity {
 
         byte[] message = bb.array();                           // get the byte[] for signing
 
-        System.out.println("MESSAGE WITHOUT SIG: " + message.length);
-
         KeyStore ks = null;
         try {
             ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
             ks.load(null);
-            KeyStore.Entry entry = ks.getEntry(Constants.keyname, null);          // get key entry from the keystore
+            KeyStore.Entry entry = ks.getEntry(String.valueOf(customerId), null);          // get key entry from the keystore
             PrivateKey pri = ((KeyStore.PrivateKeyEntry)entry).getPrivateKey();   // get the private key
             Signature sg = Signature.getInstance("SHA1WithRSA");                  // build a signing object
             sg.initSign(pri);                                                     // define the signature key

@@ -44,8 +44,6 @@ public class QRActivity extends AppCompatActivity {
 
         bContent = getIntent().getByteArrayExtra("data");
 
-        System.out.println("RECEBI QRActivity: " + bContent.length);
-
         for(int i=0;i<bContent.length;i++) {
             System.out.println("R BYTE: " + bContent[i]);
         }

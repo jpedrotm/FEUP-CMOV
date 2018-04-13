@@ -1,5 +1,6 @@
 package org.feup.cmov.acmecoffee;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -18,6 +19,10 @@ import org.feup.cmov.acmecoffee.Utils.Constants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
@@ -100,6 +105,16 @@ public class RegisterActivity extends AppCompatActivity {
                 if(response != null) {
                     message = new JSONObject(response);
                     SessionManager.createSession(message, prefs);
+
+                    KeyPair kp = SessionManager.generateAndStoreKeys(this, message.getLong("id"));
+                    PublicKey kPub = kp.getPublic();
+                    BigInteger mod = ((RSAPublicKey) kPub).getModulus();
+                    BigInteger exp = ((RSAPublicKey) kPub).getPublicExponent();
+
+                    CustomerKeyStore customerKeyStore = new CustomerKeyStore(this, message.getLong("id"), mod, exp);
+                    Thread thread = new Thread(customerKeyStore);
+                    thread.start();
+
                     Intent intent = new Intent(getApplicationContext(), HomepageActivity.class);
                     startActivity(intent);
                 } else {
@@ -128,6 +143,32 @@ public class RegisterActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(JSONObject... jsonObjects) {
             return HttpHandler.insertNewCustomer(jsonObjects[0].toString());
+        }
+    }
+
+    private class CustomerKeyStore implements Runnable {
+        Context context = null;
+        Long id;
+        BigInteger mod, exp;
+
+        CustomerKeyStore(Context context, Long id, BigInteger mod, BigInteger exp) {
+            this.context = context;
+            this.id = id;
+            this.mod = mod;
+            this.exp = exp;
+        }
+
+        @Override
+        public void run() {
+            try {
+                JSONObject info = new JSONObject();
+                info.put("customer_id", id);
+                info.put("mod", mod.toString());
+                info.put("exp", exp.toString());
+                HttpHandler.updateCustomerModAndExp(info.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

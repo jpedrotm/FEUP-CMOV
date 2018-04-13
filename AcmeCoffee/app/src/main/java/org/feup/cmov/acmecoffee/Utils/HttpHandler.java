@@ -15,7 +15,7 @@ public class HttpHandler {
     private static URL url;
     private static HttpURLConnection urlConnection = null;
 
-    private static final String DOMAIN = "4fea0ef4.ngrok.io";
+    private static final String DOMAIN = "72b43c5a.ngrok.io";
 
     private static String readStream(InputStream in) {
         BufferedReader reader = null;
@@ -51,6 +51,45 @@ public class HttpHandler {
 
         try {
             url = new URL("http://" +DOMAIN + "/customer/save");
+            System.out.println(url.toString());
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setDoOutput(true);
+            urlConnection.setDoInput(true);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setUseCaches(false);
+
+            DataOutputStream outputStream = new DataOutputStream(urlConnection.getOutputStream());
+            outputStream.writeBytes(message);
+            outputStream.flush();
+            outputStream.close();
+
+            // get response
+            int responseCode = urlConnection.getResponseCode();
+
+            if(responseCode == HttpURLConnection.HTTP_CREATED) {
+                customerInfo = readStream(urlConnection.getInputStream());
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        finally {
+            if(urlConnection != null)
+                urlConnection.disconnect();
+        }
+
+        return customerInfo;
+    }
+
+    public static String updateCustomerModAndExp(String message) {
+
+        String customerInfo = null;
+
+        Log.d("REQUEST", message);
+
+        try {
+            url = new URL("http://" +DOMAIN + "/customer/keyinfo");
             System.out.println(url.toString());
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);

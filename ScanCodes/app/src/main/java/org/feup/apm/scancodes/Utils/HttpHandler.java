@@ -7,15 +7,18 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 public class HttpHandler {
 
     private static URL url;
     private static HttpURLConnection urlConnection = null;
 
-    private static final String DOMAIN = "50bd9bfe.ngrok.io";
+    private static final String DOMAIN = "72b43c5a.ngrok.io";
 
     private static String readStream(InputStream in) {
         BufferedReader reader = null;
@@ -43,8 +46,13 @@ public class HttpHandler {
         return response.toString();
     }
 
-    public static String customerRequest(String message) {
+    public static String customerRequest(String message) throws UnsupportedEncodingException {
         String response = null;
+        byte[] array = message.getBytes("ISO-8859-1");
+        System.out.println("ARRAY SIZE: " + array.length);
+        for(byte b: array) {
+            System.out.println("BYTE: " + b);
+        }
 
         try {
             url = new URL("http://" + DOMAIN + "/order/save");
@@ -57,7 +65,7 @@ public class HttpHandler {
             urlConnection.setUseCaches(false);
 
             DataOutputStream outputStream = new DataOutputStream(urlConnection.getOutputStream());
-            outputStream.writeBytes(message);
+            outputStream.write(message.getBytes("ISO-8859-1"));
             outputStream.flush();
             outputStream.close();
 
@@ -65,7 +73,6 @@ public class HttpHandler {
             int responseCode = urlConnection.getResponseCode();
 
             if(responseCode == HttpURLConnection.HTTP_CREATED) {
-                System.out.println("CREATED");
                 response = readStream(urlConnection.getInputStream());
             }
         }

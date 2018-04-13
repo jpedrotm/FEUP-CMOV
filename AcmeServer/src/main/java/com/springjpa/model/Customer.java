@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,6 +33,12 @@ public class Customer implements Serializable {
 	@Column(name = "nif")
 	private String nif;
 
+	@Column(name = "mod")
+    private String mod;
+
+	@Column(name = "exp")
+    private String exp;
+
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             mappedBy = "customer")
@@ -45,11 +52,13 @@ public class Customer implements Serializable {
 	protected Customer() {
 	}
 
-	public Customer(String email, String name, String password, String nif) {
+	public Customer(String email, String name, String password, String nif, String mod, String exp) {
 		this.email = email;
 		this.name = name;
 		this.password = password;
 		this.nif = nif;
+		this.mod = mod;
+		this.exp = exp;
 	}
 
     public String getEmail() {
@@ -62,6 +71,15 @@ public class Customer implements Serializable {
 
     public Set<Voucher> getVouchers() {
         return vouchers;
+    }
+
+
+    public String getMod() {
+        return mod;
+    }
+
+    public String getExp() {
+        return exp;
     }
 
     public String getVouchersJSON() throws JSONException {
@@ -95,4 +113,12 @@ public class Customer implements Serializable {
 
         return response.toString();
 	}
+
+    public void setMod(String mod) {
+        this.mod = mod;
+    }
+
+    public void setExp(String exp) {
+        this.exp = exp;
+    }
 }

@@ -53,8 +53,6 @@ public class MainActivity extends Activity {
         scan(true);
       }
     });
-
-    generateAndStoreKeys();
   }
 
   @Override
@@ -97,61 +95,11 @@ public class MainActivity extends Activity {
     if (requestCode == 0) {
       if (resultCode == RESULT_OK) {
         String contents = data.getStringExtra("SCAN_RESULT");
-        try {
-          byte[] array = contents.getBytes("ISO-8859-1");
-          System.out.println("ARRAY SIZE: " + array.length);
-          contructMessage(array);
-        } catch (UnsupportedEncodingException e) {
-          e.printStackTrace();
-        } catch (JSONException e) {
-          e.printStackTrace();
-        }
+          CustomerRequest customerRequest = new CustomerRequest(this, contents);
+          Thread thr = new Thread(customerRequest);
+          thr.start();
       }
     }
-  }
-
-  private void contructMessage(byte[] array) throws JSONException {
-
-    int sign_size = Constants.KEY_SIZE/8;
-    int mess_size = array.length - sign_size;
-
-    ByteBuffer buffer = ByteBuffer.wrap(array);
-    /*byte[] mess = new byte[mess_size];
-    byte[] sign = new byte[sign_size];
-    buffer.get(mess, 0, mess_size);             // extract the message containing nr. of types + type1 + type2 + ... (nr times)
-    buffer.get(sign, 0, sign_size);             // extract the signature
-    boolean verified = validate(mess, sign);*/
-
-    JSONObject response = new JSONObject();
-    JSONArray items = new JSONArray();
-
-    int customerId = (int) buffer.get(0);
-    response.put("customer_id", customerId);
-    int nrItems = (int) buffer.get(1);
-    if(nrItems > 0) {
-      ArrayList<Integer> itemsIds = new ArrayList<>();
-      for(int i=0;i < nrItems;i++) {
-        items.put((int) buffer.get(i + 2));
-        itemsIds.add((int) buffer.get(i + 2));
-      }
-    }
-
-    response.put("items", items);
-
-    int hasVoucher = buffer.get(nrItems + 2);
-    int voucherId = -1;
-    if(hasVoucher != 0) {
-      voucherId = buffer.get(nrItems + 3);
-    }
-
-    response.put("voucher_id", voucherId);
-
-    System.out.println("MESSAGE: " + response.toString());
-
-    CustomerRequest customerRequest = new CustomerRequest(this, response.toString());
-    Thread thr = new Thread(customerRequest);
-    thr.start();
-
   }
 
   boolean validate(byte[] message, byte[] signature) {
@@ -172,33 +120,6 @@ public class MainActivity extends Activity {
     return verified;
   }
 
-  private void generateAndStoreKeys(){
-    try {
-      KeyStore ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
-      ks.load(null);
-      KeyStore.Entry entry = ks.getEntry(Constants.keyname, null);         // verify if the keystore has already the keys
-      if (entry == null) {
-        Calendar start = new GregorianCalendar();
-        Calendar end = new GregorianCalendar();
-        end.add(Calendar.YEAR, 20);                                       // start and end validity
-        KeyPairGenerator kgen = KeyPairGenerator.getInstance("RSA", Constants.ANDROID_KEYSTORE);    // keys for RSA algorithm
-        @SuppressLint({"NewApi", "LocalSuppress"}) AlgorithmParameterSpec spec = new KeyPairGeneratorSpec.Builder(this)      // specification for key generation
-                .setKeySize(Constants.KEY_SIZE)                                       // key size in bits
-                .setAlias(Constants.keyname)                                          // name of the entry in keystore
-                .setSubject(new X500Principal("CN=" + Constants.keyname))             // identity of the certificate holding the public key (mandatory)
-                .setSerialNumber(BigInteger.valueOf(12121212))                        // certificate serial number (mandatory)
-                .setStartDate(start.getTime())
-                .setEndDate(end.getTime())
-                .build();
-        kgen.initialize(spec);
-        KeyPair kp = kgen.generateKeyPair();                                      // the keypair is automatically stored in the app keystore
-      }
-    }
-    catch (Exception ex) {
-      Log.d("ERROR GENERATING KEY: ", ex.getMessage());
-    }
-  }
-
   private class CustomerRequest implements Runnable {
     Context context = null;
     String info = null;
@@ -210,9 +131,9 @@ public class MainActivity extends Activity {
 
     @Override
     public void run() {
-      String response = HttpHandler.customerRequest(info);
-      System.out.println("RESPONSE: " + response);
       try {
+          String response = HttpHandler.customerRequest(info);
+          System.out.println("RESPONSE: " + response);
         if(response != null) {
           final JSONObject info = new JSONObject(response);
           runOnUiThread(new Runnable() {
@@ -236,6 +157,8 @@ public class MainActivity extends Activity {
         }
       } catch (JSONException e) {
         e.printStackTrace();
+      } catch (UnsupportedEncodingException e) {
+          e.printStackTrace();
       }
     }
   }

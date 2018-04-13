@@ -11,6 +11,8 @@ import com.springjpa.model.Customer;
 import com.springjpa.repo.CustomerRepository;
 import org.json.JSONObject;
 
+import java.math.BigInteger;
+
 @RestController
 @RequestMapping(value = "/customer")
 public class CustomerController {
@@ -20,7 +22,7 @@ public class CustomerController {
 	@RequestMapping(value = "/save", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> process(@RequestBody String customer) throws JSONException {
         JSONObject cus = new JSONObject(customer);
-        Customer newCustomer = new Customer(cus.getString("email"),cus.getString("name"), BCrypt.hashpw(cus.getString("password"), BCrypt.gensalt()), cus.getString("nif"));
+        Customer newCustomer = new Customer(cus.getString("email"),cus.getString("name"), BCrypt.hashpw(cus.getString("password"), BCrypt.gensalt()), cus.getString("nif"), null, null) ;
         if(repository.save(newCustomer) != null) {
             return new ResponseEntity<>(newCustomer.toString(), HttpStatus.CREATED);
         }
@@ -29,6 +31,19 @@ public class CustomerController {
         }
 
 	}
+
+    @RequestMapping(value = "/keyinfo", consumes = "application/json", produces = "application/json")
+    public ResponseEntity addKeyInfoToCustomer(@RequestBody String request) throws JSONException {
+        JSONObject cus = new JSONObject(request);
+        Customer customer = repository.findOne(cus.getLong("customer_id"));
+        String mod = cus.getString("mod");
+        String exp = cus.getString("exp");
+        System.out.println("MOD | EXP: " + mod  + "; " + exp);
+        customer.setMod(mod);
+        customer.setExp(exp);
+        repository.save(customer);
+        return new ResponseEntity(HttpStatus.ACCEPTED);
+    }
 
     @RequestMapping("/{id}")
     public String findById(@PathVariable("id") Long id){

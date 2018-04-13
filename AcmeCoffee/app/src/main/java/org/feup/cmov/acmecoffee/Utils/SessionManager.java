@@ -39,11 +39,11 @@ public class SessionManager {
         prefs.edit().clear().apply();
     }
 
-    public static void generateAndStoreKeys(Context context){
+    public static KeyPair generateAndStoreKeys(Context context, Long customerId){
         try {
             KeyStore ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
             ks.load(null);
-            KeyStore.Entry entry = ks.getEntry(Constants.keyname, null);         // verify if the keystore has already the keys
+            KeyStore.Entry entry = ks.getEntry(String.valueOf(customerId), null);         // verify if the keystore has already the keys
             if (entry == null) {
                 Calendar start = new GregorianCalendar();
                 Calendar end = new GregorianCalendar();
@@ -51,7 +51,7 @@ public class SessionManager {
                 KeyPairGenerator kgen = KeyPairGenerator.getInstance("RSA", Constants.ANDROID_KEYSTORE);    // keys for RSA algorithm
                 AlgorithmParameterSpec spec = new KeyPairGeneratorSpec.Builder(context)      // specification for key generation
                         .setKeySize(Constants.KEY_SIZE)                                       // key size in bits
-                        .setAlias(Constants.keyname)                                          // name of the entry in keystore
+                        .setAlias(String.valueOf(customerId))                                         // name of the entry in keystore
                         .setSubject(new X500Principal("CN=" + Constants.keyname))             // identity of the certificate holding the public key (mandatory)
                         .setSerialNumber(BigInteger.valueOf(12121212))                        // certificate serial number (mandatory)
                         .setStartDate(start.getTime())
@@ -59,10 +59,13 @@ public class SessionManager {
                         .build();
                 kgen.initialize(spec);
                 KeyPair kp = kgen.generateKeyPair();                                      // the keypair is automatically stored in the app keystore
+                return kp;
             }
         }
         catch (Exception ex) {
             Log.d("ERROR GENERATING KEY: ", ex.getMessage());
         }
+
+        return null;
     }
 }
