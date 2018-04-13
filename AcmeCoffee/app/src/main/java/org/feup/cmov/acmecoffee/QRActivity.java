@@ -10,11 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Hashtable;
 
 public class QRActivity extends AppCompatActivity {
     ImageView qrCodeImageview;
@@ -22,7 +24,7 @@ public class QRActivity extends AppCompatActivity {
     byte [] bContent;
     String content = null;
     String errorMsg = "";
-    public final static int WIDTH=700;
+    public final static int WIDTH=400;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class QRActivity extends AppCompatActivity {
 
         bContent = getIntent().getByteArrayExtra("data");
 
-        System.out.println("RECEBI: " + bContent.length);
+        System.out.println("RECEBI QRActivity: " + bContent.length);
 
         for(int i=0;i<bContent.length;i++) {
             System.out.println("R BYTE: " + bContent[i]);
@@ -60,13 +62,17 @@ public class QRActivity extends AppCompatActivity {
             public void run() {
                 final Bitmap bitmap;
                 try {
-                    bitmap = encodeAsBitmap(content);
-                    runOnUiThread(new Runnable() {  // runOnUiThread method used to do UI task in main thread.
-                        @Override
-                        public void run() {
-                            qrCodeImageview.setImageBitmap(bitmap);
-                        }
-                    });
+                    try {
+                        bitmap = encodeAsBitmap(content);
+                        runOnUiThread(new Runnable() {  // runOnUiThread method used to do UI task in main thread.
+                            @Override
+                            public void run() {
+                                qrCodeImageview.setImageBitmap(bitmap);
+                            }
+                        });
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                 }
                 catch (WriterException e) {
                     errorMsg += "\n" + e.getMessage();
@@ -83,10 +89,15 @@ public class QRActivity extends AppCompatActivity {
         t.start();
     }
 
-    Bitmap encodeAsBitmap(String str) throws WriterException {
+    Bitmap encodeAsBitmap(String str) throws WriterException, UnsupportedEncodingException {
         BitMatrix result;
         try {
-            result = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, WIDTH, WIDTH, null);
+            System.out.println("STR: " +str.length());
+            byte[] t = str.getBytes("ISO-8859-1");
+            System.out.println(t[65] + " " + t[66] + " " + t[67]);
+            Hashtable<EncodeHintType, String> hints = new Hashtable<>();
+            hints.put(EncodeHintType.CHARACTER_SET, "ISO-8859-1");
+            result = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, WIDTH, WIDTH, hints);
         }
         catch (IllegalArgumentException iae) {
             // Unsupported format

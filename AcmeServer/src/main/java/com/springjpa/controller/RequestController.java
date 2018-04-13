@@ -52,9 +52,21 @@ public class RequestController {
             requestLineRepository.save(rl);
         }
 
+        JSONObject result = new JSONObject();
+
         newRequest.setTotalPrice(finalPrice);
         requestRepository.save(newRequest);
-        JSONObject result = new JSONObject();
+
+        Long voucher_id = response.getLong("voucher_id");
+        if(voucher_id != -1) {
+            Voucher v = voucherRepository.findOne(voucher_id);
+            if(v.getType().equals(Voucher.VoucherType.FREE_COFFEE)) {
+                result.put("voucher_free_coffee: ", true);
+            } else {
+                finalPrice = Math.round((finalPrice *0.95) * 100) / 100;
+            }
+        }
+
         result.put("price", finalPrice);
         result.put("request_id", newRequest.getId());
         return new ResponseEntity<>(result.toString(), HttpStatus.CREATED);

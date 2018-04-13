@@ -49,8 +49,6 @@ public class HomepageActivity extends AppCompatActivity
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         sessionContent = prefs.getAll();
 
-        DatabaseHelper.getInstance(this).getVouchers();
-
         setNavigationViewItemsTitle();
     }
 

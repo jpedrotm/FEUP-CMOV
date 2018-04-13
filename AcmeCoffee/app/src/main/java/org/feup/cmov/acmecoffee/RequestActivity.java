@@ -24,6 +24,7 @@ import org.feup.cmov.acmecoffee.Database.DatabaseHelper;
 import org.feup.cmov.acmecoffee.Model.Voucher;
 
 import org.feup.cmov.acmecoffee.Utils.Constants;
+import org.feup.cmov.acmecoffee.Utils.SessionManager;
 import org.json.JSONArray;
 
 import java.io.IOException;
@@ -121,8 +122,6 @@ public class RequestActivity extends AppCompatActivity {
                 }
             }
         });
-
-        generateAndStoreKeys();
     }
 
     public void checkAvailableVouchers(){
@@ -174,7 +173,7 @@ public class RequestActivity extends AppCompatActivity {
 
     private byte[] constructMessage() {
         int nr = IDS.size();                                  //
-        ByteBuffer bb = ByteBuffer.allocate((nr + 3)); // wrap and allocate a byte[] for message and signature
+        ByteBuffer bb = ByteBuffer.allocate((nr + 3) + Constants.KEY_SIZE/8); // wrap and allocate a byte[] for message and signature
         int customerId = ((Long) sessionContent.get("id")).intValue();
         bb.put((byte) customerId);
         bb.put((byte) nr);
@@ -194,24 +193,11 @@ public class RequestActivity extends AppCompatActivity {
             bb.put((byte) voucherToUse);
         }
 
-
-
-
-       /* if(((RadioButton) findViewById( R.id.freeCoffeeRadio)).isChecked()) {
-            bb.put((byte) 1); //flag a dizer que um voucher foi escolhido
-            bb.put((byte) 1); // id do voucher
-        } else if(((RadioButton) findViewById( R.id.fiveDiscountRadio)).isChecked()) {
-            bb.put((byte) 1); // flag a dizer que um voucher foi escolhido
-            bb.put((byte) 2); // id do voucher
-        } else {
-            bb.put((byte) 0);
-        } */
-
-       
-
         byte[] message = bb.array();                           // get the byte[] for signing
 
-        /* KeyStore ks = null;
+        System.out.println("MESSAGE WITHOUT SIG: " + message.length);
+
+        KeyStore ks = null;
         try {
             ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
             ks.load(null);
@@ -223,36 +209,9 @@ public class RequestActivity extends AppCompatActivity {
             sg.sign(message, nr + 3, Constants.KEY_SIZE/8);                         // sign and append the signature to the message bytes
         } catch (Exception e) {
             e.printStackTrace();
-        } */
+        }
 
         return message;
-    }
-
-    private void generateAndStoreKeys(){
-        try {
-            KeyStore ks = KeyStore.getInstance(Constants.ANDROID_KEYSTORE);
-            ks.load(null);
-            KeyStore.Entry entry = ks.getEntry(Constants.keyname, null);         // verify if the keystore has already the keys
-            if (entry == null) {
-                Calendar start = new GregorianCalendar();
-                Calendar end = new GregorianCalendar();
-                end.add(Calendar.YEAR, 20);                                       // start and end validity
-                KeyPairGenerator kgen = KeyPairGenerator.getInstance("RSA", Constants.ANDROID_KEYSTORE);    // keys for RSA algorithm
-                @SuppressLint({"NewApi", "LocalSuppress"}) AlgorithmParameterSpec spec = new KeyPairGeneratorSpec.Builder(this)      // specification for key generation
-                        .setKeySize(Constants.KEY_SIZE)                                       // key size in bits
-                        .setAlias(Constants.keyname)                                          // name of the entry in keystore
-                        .setSubject(new X500Principal("CN=" + Constants.keyname))             // identity of the certificate holding the public key (mandatory)
-                        .setSerialNumber(BigInteger.valueOf(12121212))                        // certificate serial number (mandatory)
-                        .setStartDate(start.getTime())
-                        .setEndDate(end.getTime())
-                        .build();
-                kgen.initialize(spec);
-                KeyPair kp = kgen.generateKeyPair();                                      // the keypair is automatically stored in the app keystore
-            }
-        }
-        catch (Exception ex) {
-            Log.d("ERROR GENERATING KEY: ", ex.getMessage());
-        }
     }
 
     class CustomAdapter extends BaseAdapter {
