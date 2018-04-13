@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Table(name = "customer", uniqueConstraints={@UniqueConstraint(columnNames = {"email"})})
 public class Customer implements Serializable {
 
+
 	private static final long serialVersionUID = -3009157732242241606L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -51,6 +52,7 @@ public class Customer implements Serializable {
 
 	protected Customer() {
 	}
+
 
 	public Customer(String email, String name, String password, String nif, String mod, String exp) {
 		this.email = email;
