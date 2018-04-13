@@ -57,6 +57,7 @@ public class RequestActivity extends AppCompatActivity {
     public  ArrayList<Integer> IDS = new ArrayList<>();
     public  TextView total;
     public  double totalMoney;
+
     public static final int STATIC_INT_VALUE = 10;
     public static final int RESULT_OK = 11;
     public CustomAdapter cursorAdapter = new CustomAdapter();
@@ -64,6 +65,10 @@ public class RequestActivity extends AppCompatActivity {
     RadioButton freeCoffee;
     RadioButton fiveDiscount;
     RadioButton noVoucher;
+
+    public int voucherToUse;
+    public ArrayList<Integer> coffeeVouchers = new ArrayList<>();
+    public ArrayList<Integer> discountVouhcers = new ArrayList<>();
 
     private SharedPreferences prefs;
     Map<String, ?> sessionContent;
@@ -103,13 +108,15 @@ public class RequestActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if(checkedId == R.id.freeCoffeeRadio){
-
+                    voucherToUse = getMinValue(coffeeVouchers);
                     updateTotal(0,0);
                 }
                 if (checkedId == R.id.fiveDiscountRadio){
+                    voucherToUse = getMinValue(discountVouhcers);
                     updateTotal(0,1);
                 }
                 if ( checkedId == R.id.noVoucherRadio){
+                    voucherToUse = 0; //POMOS ZERO AQUI????
                     updateTotal(0,0);
                 }
             }
@@ -123,13 +130,25 @@ public class RequestActivity extends AppCompatActivity {
 
         for(int i = 0; i < vouchers.size(); i++){
             if(vouchers.get(i).getStringFromType(vouchers.get(i).getType()).equals("FREE_COFFEE")){
+                coffeeVouchers.add(i);
                 freeCoffee.setClickable(true);
             }
             else  if(vouchers.get(i).getStringFromType(vouchers.get(i).getType()).equals("FIVE_PERCENT_DISCOUNT")){
+                discountVouhcers.add(i);
                 fiveDiscount.setClickable(true);
             }
         }
 
+    }
+
+    public static int getMinValue(ArrayList<Integer> array) {
+        int minValue = array.get(0);
+        for (int i = 1; i < array.size(); i++) {
+            if (array.get(i) < minValue) {
+                minValue = array.get(i);
+            }
+        }
+        return minValue;
     }
 
     @Override
@@ -167,6 +186,18 @@ public class RequestActivity extends AppCompatActivity {
         //VOUCHERS AQUI
 
         /* if(((RadioButton) findViewById( R.id.freeCoffeeRadio)).isChecked()) {
+        if(voucherToUse != 0){
+            bb.put((byte) 1);
+            bb.put((byte) voucherToUse);
+        }
+        else{
+            bb.put((byte) voucherToUse);
+        }
+
+
+        
+
+       /* if(((RadioButton) findViewById( R.id.freeCoffeeRadio)).isChecked()) {
             bb.put((byte) 1); //flag a dizer que um voucher foi escolhido
             bb.put((byte) 1); // id do voucher
         } else if(((RadioButton) findViewById( R.id.fiveDiscountRadio)).isChecked()) {
