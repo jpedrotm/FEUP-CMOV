@@ -8,6 +8,7 @@ Using the app, the customers should first make a registration (only once when th
 # Instructions
 - Download **ngrok** and run on port 8080.
 	>ngrok.exe http 8080 (in case you are running on windows)
+	
 	>ngrok http 8080 (in case you are running on linux or mac)
 	
 - Copy the domain corresponding to the HTTP URL given by ngrok and paste it inside **AcmeCoffee/../java/../Utils/HttpHandler** line **18** and inside **ScanCodes../java/Utils/HttpHandler** line **21**.
