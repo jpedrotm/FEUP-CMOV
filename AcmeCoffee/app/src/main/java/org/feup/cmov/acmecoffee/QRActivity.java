@@ -44,10 +44,6 @@ public class QRActivity extends AppCompatActivity {
 
         bContent = getIntent().getByteArrayExtra("data");
 
-        for(int i=0;i<bContent.length;i++) {
-            System.out.println("R BYTE: " + bContent[i]);
-        }
-
         try {
             content = new String(bContent, "ISO-8859-1");
         }

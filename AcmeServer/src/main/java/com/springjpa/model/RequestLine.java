@@ -25,7 +25,7 @@ public class RequestLine implements Serializable {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    protected RequestLine(Customer customer, Item item_id, int quantity) {
+    protected RequestLine() {
     }
 
     public RequestLine(Request request,Item item, int quantity) {

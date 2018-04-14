@@ -1,6 +1,5 @@
 package org.feup.apm.scancodes;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -9,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.security.KeyPairGeneratorSpec;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,24 +16,13 @@ import android.widget.Toast;
 
 import org.feup.apm.scancodes.Utils.Constants;
 import org.feup.apm.scancodes.Utils.HttpHandler;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.PublicKey;
 import java.security.Signature;
-import java.security.spec.AlgorithmParameterSpec;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
-import javax.security.auth.x500.X500Principal;
 
 public class MainActivity extends Activity {
   static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
@@ -139,6 +126,7 @@ public class MainActivity extends Activity {
             public void run()
             {
               try {
+                System.out.println("VOU");
                   String messageText = "Price: " + info.getDouble("price") + "€\nRequest ID: " + info.getLong("request_id");
                 if(info.getBoolean("voucher_free_coffee")){
                     messageText += "\nHas a free coffee to receive.";

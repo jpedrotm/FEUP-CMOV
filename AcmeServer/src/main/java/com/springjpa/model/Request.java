@@ -29,8 +29,7 @@ public class Request implements Serializable {
             mappedBy = "request")
     private Set<RequestLine> requestLines = new HashSet<>();
 
-    protected Request() {
-    }
+    protected Request() { }
 
     public Request(Customer customer) {
         this.customer = customer;

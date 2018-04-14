@@ -2,7 +2,6 @@ package com.springjpa.controller;
 
 import com.springjpa.model.*;
 import com.springjpa.repo.*;
-import com.springjpa.utils.Metadata;
 import com.springjpa.utils.MetadataManager;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,20 +76,23 @@ public class RequestController {
             }
 
             JSONObject result = new JSONObject();
-            newRequest.setTotalPrice(finalPrice);
-            requestRepository.save(newRequest);
 
             Long voucher_id = response.getLong("voucher_id");
+            boolean usedFreeCoffeeVoucher = false;
             if(voucher_id != -1) {
                 Voucher v = voucherRepository.findOne(voucher_id);
                 if(v.getType().equals(Voucher.VoucherType.FREE_COFFEE)) {
-                    result.put("voucher_free_coffee: ", true);
+                    usedFreeCoffeeVoucher = true;
                 } else {
                     finalPrice = Math.round((finalPrice *0.95) * 100) / 100;
                 }
                 voucherRepository.delete(voucher_id);
             }
 
+            newRequest.setTotalPrice(finalPrice);
+            requestRepository.save(newRequest);
+
+            result.put("voucher_free_coffee", usedFreeCoffeeVoucher);
             result.put("price", finalPrice);
             result.put("request_id", newRequest.getId());
             return new ResponseEntity<>(result.toString(), HttpStatus.CREATED);

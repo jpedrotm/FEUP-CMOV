@@ -15,7 +15,7 @@ public class HttpHandler {
     private static URL url;
     private static HttpURLConnection urlConnection = null;
 
-    private static final String DOMAIN = "f0b0a5e2.ngrok.io";
+    private static final String DOMAIN = "b6678de2.ngrok.io";
 
     private static String readStream(InputStream in) {
         BufferedReader reader = null;

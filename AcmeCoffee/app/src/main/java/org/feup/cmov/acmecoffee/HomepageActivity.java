@@ -54,7 +54,6 @@ public class HomepageActivity extends AppCompatActivity
 
     private void setNavigationViewItemsTitle() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        //navigationView.setItemTextColor(ColorStateList.valueOf(Color.WHITE)); Meter aqui a cor primaria
         navigationView.setNavigationItemSelectedListener(this);
 
         Menu menu = navigationView.getMenu();
@@ -86,7 +85,6 @@ public class HomepageActivity extends AppCompatActivity
             startActivity(intent);
         } else if(id == R.id.update_user_vouchers) {
             GetCustomerVouchers getCustomerVouchers = new GetCustomerVouchers(this, (Long) sessionContent.get("id"));
-
             Thread thr = new Thread(getCustomerVouchers);
             thr.start();
         } else if(id == R.id.update_menu) {
@@ -94,7 +92,6 @@ public class HomepageActivity extends AppCompatActivity
             Thread thr = new Thread(getItems);
             thr.start();
         }
-
         else if(id == R.id.update_requests){
             GetCustomerRequests getCustomerRequests = new GetCustomerRequests(this, (Long) sessionContent.get("id"));
             Thread thr = new Thread(getCustomerRequests);
