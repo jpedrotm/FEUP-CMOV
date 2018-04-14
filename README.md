@@ -9,7 +9,7 @@ Using the app, the customers should first make a registration (only once when th
 - Download **ngrok** and run on port 8080.
 	>ngrok.exe http 8080
 	
-- Copy the Forwarding HTTP URL and paste it inside **AcmeCoffee/../java/../Utils/HttpHandler** line **18**.
+- Copy the Forwarding HTTP URL and paste it inside **AcmeCoffee/../java/../Utils/HttpHandler** line **18** and inside **ScanCodes../java/Utils/HttpHandler** line **21**.
 	>example: "2683b42c.ngrok.io"
 
 - Run the AcmeServer project under any IDEA ( we use IntelliJ ).
@@ -18,8 +18,7 @@ Using the app, the customers should first make a registration (only once when th
   > If you only have access to one cellphone you can run the AcmeCoffee on your Android Emulator and read the QRCode with ScanCodes like you would normally do with 2 cellphones.
 
 
-- If you have any problem with JSON on the AcmeServer just download JSON jar executable and add it to your Libraries under Project Structure ( CTRL + ALT + SHIFT +S ).
-	>JSON download link: http://mvnrepository.com/artifact/org.json/json/20141113
+- If you have any problem with JSON on the AcmeServer just add the JSON jar executable to your Libraries under Project Structure ( CTRL + ALT + SHIFT +S ).
 
 
 # Contributors
