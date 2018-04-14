@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "request_line")
 public class RequestLine implements Serializable {
+    protected RequestLine(){};
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
